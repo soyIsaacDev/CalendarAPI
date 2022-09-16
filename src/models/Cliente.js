@@ -2,7 +2,7 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "Staff", 
+        "Cliente", 
     {
         Nombre:{
             type: DataTypes.STRING,
@@ -42,19 +42,12 @@ module.exports = s => {
         },
         UbicacionCasaSum:{
             type: DataTypes.FLOAT,
-            get() {
-                const sumaLoc = this.getDataValue('UbicacionCasaLat') + this.getDataValue('UbicacionCasaLong')
-                return sumaLoc;
+            get(){
+                const sumUbicacion = this.UbicacionCasaLat + this.UbicacionCasaLong;
+                return sumUbicacion;
             },
-            /* 
-                La forma de settear un valor calculado es  
-                calcular el valor que queremos escribir y pasar setDataValue
-                    this.setDataValue('UbicacionCasaSum', value + ValorCalculado );
-                y pasar value = 0 cuando mandemos a escribir el registro 
-            */
-            set(value){
-                const sumaLoc = this.getDataValue('UbicacionCasaLat') + this.getDataValue('UbicacionCasaLong')
-                this.setDataValue('UbicacionCasaSum', value + sumaLoc );
+            set(sumUbicacion){
+                this.setDataValue('UbicacionCasaSum', sumUbicacion);
             }
         }
     }, {

@@ -2,7 +2,7 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "CalendarEvents", 
+        "CalendarEventsA", 
     {
         kind:{
             type: DataTypes.STRING,
@@ -15,6 +15,11 @@ module.exports = s => {
         end: {
             type:DataTypes.DATE,
             allowNull:false,
+            set(value){
+                if(this.start < value){
+                    this.setDataValue('end',value);
+                }
+            }
         },
         showStart:{
             type: DataTypes.VIRTUAL,
@@ -31,13 +36,28 @@ module.exports = s => {
                 var options = { year: 'numeric', month: 'long', day: 'numeric', 
                     hour:'numeric', minute: 'numeric',  timeZone: 'America/Hermosillo' };
                 const rawValue = this.getDataValue('end');
-                return rawValue.toLocaleString('es-MX', options);
+                if (rawValue){
+                    return rawValue.toLocaleString('es-MX', options);
+                }
             }
         },
-        colorId:{
-            type: DataTypes.INTEGER,
-            allowNull: false
+        ubicacionLat:{
+            // compuesta por lat y long
+            type: DataTypes.FLOAT,
+            allowNull: false,     
         },
+        ubicacionLong:{
+            // compuesta por lat y long
+            type: DataTypes.FLOAT,
+            allowNull: false,     
+        },
+        ubicacionSum:{
+            type: DataTypes.VIRTUAL,
+            get(){
+                const sum = this.ubicacionLat + this.ubicacionLong;
+                return sum;
+            }
+        }
     }, {
     timestamps: false,
     });

@@ -4,7 +4,7 @@ const { Staff } = require("../db");
 
 server.post("/nuevoStaff", async (req, res) => { 
     try {
-      const { Nombre, Apellido_p, Apellido_m, Edad, Ciudad_Residencia } = req.body;
+      const { Nombre, Apellido_p, Apellido_m, Edad, Ciudad_Residencia, UbicacionCasaLat, UbicacionCasaLong, UbicacionCasaSum } = req.body;
       const staff = await Staff.findOrCreate({
           where: {
             Nombre
@@ -13,7 +13,10 @@ server.post("/nuevoStaff", async (req, res) => {
             Apellido_p,
             Apellido_m,
             Edad,
-            Ciudad_Residencia
+            Ciudad_Residencia,
+            UbicacionCasaLat,
+            UbicacionCasaLong,
+            UbicacionCasaSum
           }    
       });
       res.json(staff);
@@ -22,9 +25,10 @@ server.post("/nuevoStaff", async (req, res) => {
     }
 });
 
-server.get("/Staff", async (req, res) => {
+server.get("/staff", async (req, res) => {
   try {
-    const staff = await Staff.findAll({
+    const staff = await Staff.findAll({   
+      order:[['UbicacionCasaSum', 'ASC']]   
     });
     res.json(staff);
   } catch (error) {     

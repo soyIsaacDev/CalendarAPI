@@ -4,3 +4,9 @@ npm-debug.log
 .DS_Store
 /*.env
 /resources/
+
+locationComparision.js
+PedidosCliente.js
+ComparacionDist.js
+comparacionFechas.js
+GCevents.js

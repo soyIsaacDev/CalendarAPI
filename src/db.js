@@ -24,19 +24,25 @@ try {
 
 const modelStaff = require("./models/Staff");
 const modelEvaluacion = require("./models/Evaluacion");
-const modelCalendarEvent = require("./models/calendarEvents");
+const modelCalendarEventP = require("./models/calendarEventsP");
+const modelCalendarEventA = require("./models/calendarEventsA");
+const modelCliente = require("./models/Cliente");
 
 modelStaff(sequelize);
 modelEvaluacion(sequelize);
-modelCalendarEvent(sequelize);
+modelCalendarEventP(sequelize);
+modelCalendarEventA(sequelize);
+modelCliente(sequelize);
 
-let {Staff, Evaluacion, CalendarEvents} = sequelize.models;
+let {Staff, Evaluacion, CalendarEventsP, CalendarEventsA, Cliente} = sequelize.models;
 
 // Relaciones DB
 
 Evaluacion.belongsTo(Staff);
-CalendarEvents.belongsTo(Staff);
-Staff.hasOne(CalendarEvents);
+CalendarEventsP.belongsTo(Cliente)
+Cliente.hasMany(CalendarEventsP);
+CalendarEventsA.belongsTo(Staff);
+Staff.hasOne(CalendarEventsA);
 
 module.exports = {
   ...sequelize.models,

@@ -5,7 +5,9 @@ const express = require('express');
 const app = express();
 
 const { StaffRoute  } = require('./src/routes/staffRoute');
-const { calendarRoute } = require("./src/routes/calendarRoute");
+const { CalendarRoute } = require("./src/routes/calendarRoute");
+const { ClienteRoute } = require("./src/routes/customerRoute");
+const { EventosProgramados } = require("./src/routes/eventosProgramados");
 
 
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
@@ -21,7 +23,9 @@ app.get("/", (req,res) => {
 });
 
 app.use("/staff", StaffRoute);
-app.use("/calendario", calendarRoute );
+app.use("/calendario", CalendarRoute );
+app.use("/cliente", ClienteRoute);
+app.use("/eventosprogramados", EventosProgramados);
 
 //funcion para cachar errores
 app.use(function (err, req, res, next) {
