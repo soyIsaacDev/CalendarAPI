@@ -1,7 +1,7 @@
 const server = require("express").Router();
 const { Op } = require("sequelize");
 
-const { Staff, CalendarEventsA, CalendarEventsP } = require("../db");
+const { Staff, CalendarEventsA, CalendarEventsP, Citas } = require("../db");
 
 server.post("/nuevoEvento", async (req, res) => { 
     try {
@@ -17,10 +17,9 @@ server.post("/nuevoEvento", async (req, res) => {
         }
       });
 
-      const storedEvent = rawStoredEvent.filter(
-           storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
+      const storedEvent = rawStoredEvent.filter( storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
         || eventEndDate > storedEvent.start && eventEndDate <= storedEvent.end 
-        || eventStartDate < storedEvent.start && eventEndDate > storedEvent.end
+        || eventStartDate < storedEvent.start && eventEndDate > storedEvent.ends
       );
         
       if (storedEvent.length === 0){
@@ -62,48 +61,63 @@ server.get("/asignarEventos", async (req, res) => {
   // Codigo para hacer la distribucion de pedidos a los repartidores a cierta hora
   try {
     //const { kind, eventStart, eventEnd, colorId, ubicacion} = req.body;
-    const eventStartDate = new Date(eventStart);
-    const eventEndDate = new Date(eventEnd);
-
     const Now = new Date();
     //let currentHour = Now.getHours();
     let currentHour = 1;
-    var arrayDistancia = [];
 
     if(currentHour === 1 ){
+
       const staff = await Staff.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
-      const eventosProgramados = await CalendarEventsP.findAll({ order:[['ubicacionSum', 'ASC']]  });
-      
-      for (let i = 0; i < eventosProgramados.length; i++) {
-        for (let x = 1; x < staff.length; x++) {
-          const distanciaActual = staff[x].UbicacionCasaSum - eventosProgramados[i].ubicacionSum;
-          const distanciaAnterior = staff[x-1].UbicacionCasaSum - eventosProgramados[i].ubicacionSum;
+      const rawStoredEvent = await CalendarEventsP.findAll({ order:[['ubicacionSum', 'ASC']]  });
 
-          if(x === 1){
-            arrayDistancia.push({
-              distancia: distanciaAnterior,
-              StaffId: staff[x-1].id,
-              PedidoId: eventosProgramados[i].id
-            });
-          }
-            //  actual         anterior
-          if(distanciaActual < distanciaAnterior){
-            arrayDistancia.pop();
-            arrayDistancia.push({
-              distancia: distanciaActual,
-              StaffId: staff[x].id,
-              PedidoId: eventosProgramados[i].id
-            });
-          }
-        }
-
-        
+      function addHours(numOfHours, date) {
+        //set the date to 1970     time since 1970 in miliseconds  +     hours in miliseconds 
+             date.setTime           (date.getTime()                + numOfHours * 60 * 60 * 1000);
+        return date;
       }
-      res.json(arrayDistancia);
+      
+      function filterbyHour(events, start, end){
+        const storedEvent = 
+          events.filter( eventToFilter => start >=  eventToFilter.start && start < eventToFilter.end 
+                                                 || end > eventToFilter.start && end <= eventToFilter.end 
+                                                 || start < eventToFilter.start && end > eventToFilter.end
+        );
+        return storedEvent;
+      }
+      
+      for (let i = 6; i < 11; i++) {
+        const start = addHours(i, Now);
+        const end = addHours((i+1), start);
+        const faltan = [];
+        // eventos ordenados en una hora especifica 
+        const eventosFiltrados = filterbyHour(rawStoredEvent, start, end);
+        
+        // asignar primero 1.- eventos recurrentes, 2 .- solicitados con tiempo de anticipacion 3.-luego los mas recientes
+        // asignar primero eventos de horas especificas y luego los de rango de horas
+        // separar citas X primera hora y citas para horas subsequentes
+
+        const faltanXAsignar = eventosFiltrados.length - staff.length;
+            faltan.push= {
+              hora: start,
+              faltantes: faltanXAsignar
+            }
+
+        for (let i = 0; i < staff.length; i++) {
+            const citas = await Citas.create({
+                StaffId: staff[i].id,
+                ClienteId: eventosFiltrados[i].ClienteId,
+                start: eventosFiltrados[i].start,
+                end: eventosFiltrados[i].end,
+                ubicacion: {Lat: eventosFiltrados[i].ubicacionLat, Long: eventosFiltrados[i].ubicacionLong}
+            });
+        }
+      }
+
+      // Si sobran eventos como asignarlos?
+      
+      res.json({CitasProgramadas: "Ok"});
     }
 
-    
-   
   } catch (error) {
     res.send(error);
   }

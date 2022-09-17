@@ -27,14 +27,17 @@ const modelEvaluacion = require("./models/Evaluacion");
 const modelCalendarEventP = require("./models/calendarEventsP");
 const modelCalendarEventA = require("./models/calendarEventsA");
 const modelCliente = require("./models/Cliente");
+const modelCitas = require("./models/citas");
 
+//pasamos instancia de sequelize a los modelos
 modelStaff(sequelize);
 modelEvaluacion(sequelize);
 modelCalendarEventP(sequelize);
 modelCalendarEventA(sequelize);
 modelCliente(sequelize);
+modelCitas(sequelize);
 
-let {Staff, Evaluacion, CalendarEventsP, CalendarEventsA, Cliente} = sequelize.models;
+let {Staff, Evaluacion, CalendarEventsP, CalendarEventsA, Cliente, Citas} = sequelize.models;
 
 // Relaciones DB
 

@@ -42,12 +42,10 @@ module.exports = s => {
             }
         },
         ubicacionLat:{
-            // compuesta por lat y long
             type: DataTypes.FLOAT,
             allowNull: false,     
         },
         ubicacionLong:{
-            // compuesta por lat y long
             type: DataTypes.FLOAT,
             allowNull: false,     
         },
