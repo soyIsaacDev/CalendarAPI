@@ -2,10 +2,14 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "CalendarEventsA", 
+        "CalendarEventsReq", 
     {
         kind:{
             type: DataTypes.STRING,
+            allowNull: false
+        },
+        colorId:{
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         start: {
@@ -42,20 +46,22 @@ module.exports = s => {
             }
         },
         ubicacionLat:{
-            // compuesta por lat y long
             type: DataTypes.FLOAT,
             allowNull: false,     
         },
         ubicacionLong:{
-            // compuesta por lat y long
             type: DataTypes.FLOAT,
             allowNull: false,     
         },
-        ubicacionSum:{
-            type: DataTypes.VIRTUAL,
-            get(){
-                const sum = this.ubicacionLat + this.ubicacionLong;
-                return sum;
+        UbicacionSum:{
+            type: DataTypes.FLOAT,
+            get() {
+                const sumaLoc = this.getDataValue('UbicacionLat') + this.getDataValue('UbicacionLong')
+                return sumaLoc;
+            },
+            set(value){
+                const sumaLoc = this.getDataValue('UbicacionLat') + this.getDataValue('UbicacionLong')
+                this.setDataValue('UbicacionSum', value + sumaLoc );
             }
         }
     }, {

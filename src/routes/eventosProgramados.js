@@ -1,16 +1,16 @@
 const server = require("express").Router();
 const { Op } = require("sequelize");
 
-const { Staff, CalendarEventsP } = require("../db");
+const { Staff, CalendarEventsReq } = require("../db");
 
-server.post("/nuevoEventoProgramado", async (req, res) => { 
+server.post("/nuevoEventoSolicitado", async (req, res) => { 
   try {
     const { kind, colorId, eventStart, eventEnd, ubicacionLat, ubicacionLong, customerId} = req.body;
     // Sequelize No compara bien si no se definen los eventos como Date despues de recibirlos
     const eventStartDate = new Date(eventStart);
     const eventEndDate = new Date(eventEnd);
 
-    const event = await CalendarEventsP.create({
+    const event = await CalendarEventsReq.create({
       kind,
       colorId,
       start: eventStartDate,
@@ -26,9 +26,9 @@ server.post("/nuevoEventoProgramado", async (req, res) => {
   }
 });
 
-server.get("/eventosProgramados", async (req, res) => {
+server.get("/eventosSolicitados", async (req, res) => {
   try {
-    const eventoProgramado = await CalendarEventsP.findAll({
+    const eventoProgramado = await CalendarEventsReq.findAll({
       order:[['ubicacionSum', 'DESC']]
     });
     res.json(eventoProgramado)

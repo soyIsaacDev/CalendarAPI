@@ -1,61 +1,7 @@
 const server = require("express").Router();
 const { Op } = require("sequelize");
 
-const { Staff, CalendarEventsA, CalendarEventsP, Citas } = require("../db");
-
-server.post("/nuevoEvento", async (req, res) => { 
-    try {
-      const { kind, eventStart, eventEnd, IdStaff, ubicacionLat, ubicacionLong} = req.body;
-      // Sequelize No compara bien si no se definen los eventos como Date despues de recibirlos
-      const eventStartDate = new Date(eventStart);
-      const eventEndDate = new Date(eventEnd);
-
-      const rawStoredEvent = await CalendarEventsA.findAll({
-        // Op.between no esta funcionando por eso busco todo y despues filtro
-        where:{
-          StaffId: IdStaff
-        }
-      });
-
-      const storedEvent = rawStoredEvent.filter( storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
-        || eventEndDate > storedEvent.start && eventEndDate <= storedEvent.end 
-        || eventStartDate < storedEvent.start && eventEndDate > storedEvent.ends
-      );
-        
-      if (storedEvent.length === 0){
-        console.log("Estoy en null")
-        const event = await CalendarEventsA.create({
-            kind,
-            start: eventStartDate,
-            end: eventEndDate,
-            StaffId:IdStaff,
-            ubicacionLat,
-            ubicacionLong
-        })
-        console.log(event)
-        res.json(event);
-        } 
-      else{
-          console.log("NO puedo agendar");
-          res.json({respuesta:"no puedo agendar"});
-      } 
-
-    } catch (error) {
-      res.send(error);
-    }
-});
-
-server.get("/eventos", async(req, res) => {
-  try {
-    const eventos = await CalendarEventsA.findAll({});
-    
-    
-
-    res.json(eventos);
-  } catch (error) {
-    res.send(error);
-  }
-})
+const { Staff, CalendarEventsA, CalendarEventsReq, Citas } = require("../db");
 
 server.get("/asignarEventos", async (req, res) => { 
   // Codigo para hacer la distribucion de pedidos a los repartidores a cierta hora
@@ -68,7 +14,7 @@ server.get("/asignarEventos", async (req, res) => {
     if(currentHour === 1 ){
 
       const staff = await Staff.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
-      const rawStoredEvent = await CalendarEventsP.findAll({ order:[['ubicacionSum', 'ASC']]  });
+      const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['ubicacionSum', 'ASC']]  });
 
       function addHours(numOfHours, date) {
         //set the date to 1970     time since 1970 in miliseconds  +     hours in miliseconds 
@@ -122,6 +68,61 @@ server.get("/asignarEventos", async (req, res) => {
     res.send(error);
   }
 });
+
+
+server.post("/asignarEvento", async (req, res) => { 
+  try {
+    const { kind, eventStart, eventEnd, IdStaff, ubicacionLat, ubicacionLong} = req.body;
+    // Sequelize No compara bien si no se definen los eventos como Date despues de recibirlos
+    const eventStartDate = new Date(eventStart);
+    const eventEndDate = new Date(eventEnd);
+
+    const rawStoredEvent = await CalendarEventsA.findAll({
+      // Op.between no esta funcionando por eso busco todo y despues filtro
+      where:{
+        StaffId: IdStaff
+      }
+    });
+
+    const storedEvent = rawStoredEvent.filter( storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
+      || eventEndDate > storedEvent.start && eventEndDate <= storedEvent.end 
+      || eventStartDate < storedEvent.start && eventEndDate > storedEvent.ends
+    );
+      
+    if (storedEvent.length === 0){
+      console.log("Estoy en null")
+      const event = await CalendarEventsA.create({
+          kind,
+          start: eventStartDate,
+          end: eventEndDate,
+          StaffId:IdStaff,
+          ubicacionLat,
+          ubicacionLong
+      })
+      console.log(event)
+      res.json(event);
+      } 
+    else{
+        console.log("NO puedo agendar");
+        res.json({respuesta:"no puedo agendar"});
+    } 
+
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/eventos", async(req, res) => {
+try {
+  const eventos = await CalendarEventsA.findAll({});
+  
+  
+
+  res.json(eventos);
+} catch (error) {
+  res.send(error);
+}
+})
 
 module.exports = {
   CalendarRoute: server

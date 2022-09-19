@@ -2,7 +2,7 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "CalendarEventsP", 
+        "CalendarEventsAsig", 
     {
         kind:{
             type: DataTypes.STRING,
@@ -49,7 +49,7 @@ module.exports = s => {
             type: DataTypes.FLOAT,
             allowNull: false,     
         },
-        ubicacionSum:{
+        /* ubicacionSum:{
             type: DataTypes.FLOAT,
             get(){
                 const sumUbicacion = this.ubicacionLat + this.ubicacionLong *(-1);
@@ -58,7 +58,7 @@ module.exports = s => {
             set(sumUbicacion){
                 this.setDataValue('UbicacionSum', sumUbicacion);
             }
-        },
+        }, */
         colorId:{
             type: DataTypes.INTEGER,
             allowNull: false

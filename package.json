@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon index.js",
     "start": "nodemon app.js",
     "lint": "eslint"
@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jest": "^29.0.3",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1"
   },

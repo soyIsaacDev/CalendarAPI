@@ -42,12 +42,13 @@ module.exports = s => {
         },
         UbicacionCasaSum:{
             type: DataTypes.FLOAT,
-            get(){
-                const sumUbicacion = this.UbicacionCasaLat + this.UbicacionCasaLong;
-                return sumUbicacion;
+            get() {
+                const sumaLoc = this.getDataValue('UbicacionCasaLat') + this.getDataValue('UbicacionCasaLong')
+                return sumaLoc;
             },
-            set(sumUbicacion){
-                this.setDataValue('UbicacionCasaSum', sumUbicacion);
+            set(value){
+                const sumaLoc = this.getDataValue('UbicacionCasaLat') + this.getDataValue('UbicacionCasaLong')
+                this.setDataValue('UbicacionCasaSum', value + sumaLoc );
             }
         }
     }, {
