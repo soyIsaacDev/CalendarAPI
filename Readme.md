@@ -12,6 +12,7 @@ Express es un web framework para Node que brinda varias herramientas como:
         Puerto y ubicacion de templates para rendering
 
 **Controladores**
+
 The controller component is the intermediary between the model and the view. This acts as the brains behind the application and communicates with the Model and View.
 
 Brindan el acceso  → Routing y Middlewares

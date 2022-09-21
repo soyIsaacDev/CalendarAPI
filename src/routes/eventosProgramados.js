@@ -5,7 +5,7 @@ const { Staff, CalendarEventsReq } = require("../db");
 
 server.post("/nuevoEventoSolicitado", async (req, res) => { 
   try {
-    const { kind, colorId, eventStart, eventEnd, ubicacionLat, ubicacionLong, customerId} = req.body;
+    const { kind, colorId, eventStart, eventEnd, ubicacionLat, ubicacionLong, UbicacionSum, customerId } = req.body;
     // Sequelize No compara bien si no se definen los eventos como Date despues de recibirlos
     const eventStartDate = new Date(eventStart);
     const eventEndDate = new Date(eventEnd);
@@ -17,7 +17,9 @@ server.post("/nuevoEventoSolicitado", async (req, res) => {
       end: eventEndDate, 
       ubicacionLat, 
       ubicacionLong,
+      UbicacionSum,
       ClienteId: customerId,
+      
     })
     res.json(event);
     

@@ -51,17 +51,25 @@ module.exports = s => {
         },
         ubicacionLong:{
             type: DataTypes.FLOAT,
-            allowNull: false,     
+            allowNull: false,    
+            set(value){
+                if(value<0){
+                    value = value * -1;
+                    this.setDataValue('ubicacionLong', value);
+                } else {
+                    this.setDataValue('ubicacionLong', value);
+                }
+            } 
         },
         UbicacionSum:{
             type: DataTypes.FLOAT,
             get() {
-                const sumaLoc = this.getDataValue('UbicacionLat') + this.getDataValue('UbicacionLong')
+                const sumaLoc = this.getDataValue('ubicacionLat') + this.getDataValue('ubicacionLong')
                 return sumaLoc;
             },
             set(value){
-                const sumaLoc = this.getDataValue('UbicacionLat') + this.getDataValue('UbicacionLong')
-                this.setDataValue('UbicacionSum', value + sumaLoc );
+                const sumaUbic = this.getDataValue('ubicacionLat') + this.getDataValue('ubicacionLong')
+                this.setDataValue('UbicacionSum', value + sumaUbic );
             }
         }
     }, {

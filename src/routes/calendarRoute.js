@@ -6,49 +6,85 @@ const { Staff, CalendarEventsA, CalendarEventsReq, Citas } = require("../db");
 server.get("/asignarEventos", async (req, res) => { 
   // Codigo para hacer la distribucion de pedidos a los repartidores a cierta hora
   try {
-    //const { kind, eventStart, eventEnd, colorId, ubicacion} = req.body;
-    const Now = new Date();
-    //let currentHour = Now.getHours();
-    let currentHour = 1;
+    
+    /* ESTE PARA PRODUCCION
+    
+    const currentDate = new Date();
+    const currentDatePlusOne = new Date(addHours(1, new Date())); */
+
+    //SOLO para Testing
+    const currentDate = new Date("2022-09-20 1:00:00-07:00");
+    const currentDatePlusOne = new Date(addHours(1, new Date("2022-09-20 1:00:00-07:00")))
+
+    function addHours(numOfHours, date) {
+        //set the date to 1970     time since 1970 in miliseconds  +     hours in miliseconds 
+             date.setTime           (date.getTime()                + numOfHours * 60 * 60 * 1000);
+             
+        return date;
+    }
+      
+    function filterbyHour(events, start, end){
+      const storedEvent = events.filter( eventToFilter => start >=  eventToFilter.start && start < eventToFilter.end 
+                                               || end > eventToFilter.start && end <= eventToFilter.end 
+                                               || start < eventToFilter.start && end > eventToFilter.end
+                                        );
+      return storedEvent;
+    }
+
+    function filterNextHours(events, ActualDate, ActualDatePlusOne){
+      const eventosFiltrados = [];
+      // para filtrar entre las 7:00am y las 5:00pm
+      for (let i = 6; i <= 16; i++) {  
+        
+        var fechadeHoy = new Date();
+        fechadeHoy.setTime(ActualDate.getTime());
+        
+        var fechadeHoyMasUno = new Date();
+        fechadeHoyMasUno.setTime(ActualDatePlusOne.getTime());
+
+        const start = new Date(addHours(i, fechadeHoy));
+        console.log("Start  "+ i + "  Fecha  " + start)
+        const end = new Date(addHours(i, fechadeHoyMasUno));
+        console.log("End    "+ i + "  Fecha  " + end)
+        // eventos ordenados en una hora especifica 
+        const filteredbyHourEvents = filterbyHour(events, start, end)
+        
+        for (let z = 0; z < filteredbyHourEvents.length; z++) {
+          eventosFiltrados.push(filteredbyHourEvents[z]);
+        }
+      }
+      return eventosFiltrados;
+    };
+
+    //  ++++++++++++      AHI LA LLEVAMOS sigue apareciendo uno de mas   +++++++++++++
+
+    function filtradoSinRepeticiones(eventos){
+      const array = [];
+      console.log("Primer Evento ID   "+eventos[0].id)
+      array.push(eventos[0]);
+      console.log("Primer Evento Array ID   "+array[0].id)
+      for (let i = 1; i < eventos.length; i++) {
+        if(eventos[i].id != eventos[i-1].id){
+          array.push(eventos[i]);
+        }
+      }
+
+      return array;
+    } 
+
+
+    let currentHour = currentDate.getHours();
+    
 
     if(currentHour === 1 ){
 
       const staff = await Staff.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
-      const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['ubicacionSum', 'ASC']]  });
-
-      function addHours(numOfHours, date) {
-        //set the date to 1970     time since 1970 in miliseconds  +     hours in miliseconds 
-             date.setTime           (date.getTime()                + numOfHours * 60 * 60 * 1000);
-        return date;
-      }
+      const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['UbicacionSum', 'ASC']]  });
       
-      function filterbyHour(events, start, end){
-        const storedEvent = 
-          events.filter( eventToFilter => start >=  eventToFilter.start && start < eventToFilter.end 
-                                                 || end > eventToFilter.start && end <= eventToFilter.end 
-                                                 || start < eventToFilter.start && end > eventToFilter.end
-        );
-        return storedEvent;
-      }
+      const filtrosSigHoras = filterNextHours(rawStoredEvent, currentDate, currentDatePlusOne);
+      const filtradoFin = filtradoSinRepeticiones(filtrosSigHoras);
       
-      for (let i = 6; i < 11; i++) {
-        const start = addHours(i, Now);
-        const end = addHours((i+1), start);
-        const faltan = [];
-        // eventos ordenados en una hora especifica 
-        const eventosFiltrados = filterbyHour(rawStoredEvent, start, end);
-        
-        // asignar primero 1.- eventos recurrentes, 2 .- solicitados con tiempo de anticipacion 3.-luego los mas recientes
-        // asignar primero eventos de horas especificas y luego los de rango de horas
-        // separar citas X primera hora y citas para horas subsequentes
-
-        const faltanXAsignar = eventosFiltrados.length - staff.length;
-            faltan.push= {
-              hora: start,
-              faltantes: faltanXAsignar
-            }
-
-        for (let i = 0; i < staff.length; i++) {
+      /* for (let i = 0; i < staff.length; i++) {
             const citas = await Citas.create({
                 StaffId: staff[i].id,
                 ClienteId: eventosFiltrados[i].ClienteId,
@@ -56,12 +92,28 @@ server.get("/asignarEventos", async (req, res) => {
                 end: eventosFiltrados[i].end,
                 ubicacion: {Lat: eventosFiltrados[i].ubicacionLat, Long: eventosFiltrados[i].ubicacionLong}
             });
-        }
-      }
+        } */
 
+      res.json(filtradoFin)
+      
+    
+      /*
+        // asignar primero 1.- eventos recurrentes, 2 .- solicitados con tiempo de anticipacion 3.-luego los mas recientes
+        // asignar primero eventos de horas especificas y luego los de rango de horas
+        // separar citas X primera hora y citas para horas subsequentes
+
+         const faltanXAsignar = eventosFiltrados.length - staff.length;
+            faltan.push= {
+              hora: start,
+              faltantes: faltanXAsignar
+            }
+
+         
+      }*/
+      //res.json(eventosFiltrados);
       // Si sobran eventos como asignarlos?
       
-      res.json({CitasProgramadas: "Ok"});
+      //res.json({CitasProgramadas: "Ok"});
     }
 
   } catch (error) {
@@ -70,34 +122,40 @@ server.get("/asignarEventos", async (req, res) => {
 });
 
 
-server.post("/asignarEvento", async (req, res) => { 
+server.post("/reqEvento", async (req, res) => { 
   try {
-    const { kind, eventStart, eventEnd, IdStaff, ubicacionLat, ubicacionLong} = req.body;
+    const { kind, colorId, eventStart, eventEnd, ubicacionLat, ubicacionLong, UbicacionSum, IdCliente} = req.body;
     // Sequelize No compara bien si no se definen los eventos como Date despues de recibirlos
-    const eventStartDate = new Date(eventStart);
-    const eventEndDate = new Date(eventEnd);
+    const start = new Date(eventStart);
+    const end = new Date(eventEnd);
 
-    const rawStoredEvent = await CalendarEventsA.findAll({
+    const rawStoredEvent = await CalendarEventsReq.findAll({
       // Op.between no esta funcionando por eso busco todo y despues filtro
       where:{
-        StaffId: IdStaff
+        ClienteId: IdCliente
       }
     });
 
-    const storedEvent = rawStoredEvent.filter( storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
+    /* const storedEvent = rawStoredEvent.filter( storedEvent => eventStartDate >= storedEvent.start && eventStartDate < storedEvent.end 
       || eventEndDate > storedEvent.start && eventEndDate <= storedEvent.end 
       || eventStartDate < storedEvent.start && eventEndDate > storedEvent.ends
+    ); */
+    const storedEvent = rawStoredEvent.filter( eventToFilter => start >=  eventToFilter.start && start < eventToFilter.end 
+      || end > eventToFilter.start && end <= eventToFilter.end 
+      || start < eventToFilter.start && end > eventToFilter.end
     );
       
     if (storedEvent.length === 0){
       console.log("Estoy en null")
-      const event = await CalendarEventsA.create({
+      const event = await CalendarEventsReq.create({
           kind,
-          start: eventStartDate,
-          end: eventEndDate,
-          StaffId:IdStaff,
+          colorId,
+          start: start,
+          end: end,
           ubicacionLat,
-          ubicacionLong
+          ubicacionLong,
+          UbicacionSum,
+          ClienteId:IdCliente,
       })
       console.log(event)
       res.json(event);
@@ -114,7 +172,7 @@ server.post("/asignarEvento", async (req, res) => {
 
 server.get("/eventos", async(req, res) => {
 try {
-  const eventos = await CalendarEventsA.findAll({});
+  const eventos = await CalendarEventsReq.findAll({});
   
   
 
