@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 
 const { Staff, CalendarEventsA, CalendarEventsReq, Citas } = require("../db");
 
-server.get("/asignarEventos", async (req, res) => { 
+server.get("/asignarPedidos", async (req, res) => { 
   // Codigo para hacer la distribucion de pedidos a los repartidores a cierta hora
   try {
     
@@ -43,9 +43,9 @@ server.get("/asignarEventos", async (req, res) => {
         fechadeHoyMasUno.setTime(ActualDatePlusOne.getTime());
 
         const start = new Date(addHours(i, fechadeHoy));
-        console.log("Start  "+ i + "  Fecha  " + start)
+        //console.log("Start  "+ i + "  Fecha  " + start)
         const end = new Date(addHours(i, fechadeHoyMasUno));
-        console.log("End    "+ i + "  Fecha  " + end)
+        //console.log("End    "+ i + "  Fecha  " + end)
         // eventos ordenados en una hora especifica 
         const filteredbyHourEvents = filterbyHour(events, start, end)
         
@@ -56,13 +56,20 @@ server.get("/asignarEventos", async (req, res) => {
       return eventosFiltrados;
     };
 
+
+    function filtradoSinRepeticiones(eventos){
+      
+    } 
+
+
     let currentHour = currentDate.getHours();
     
 
     if(currentHour === 1 ){
 
       const staff = await Staff.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
-      const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['UbicacionSum', 'ASC']]  });
+      const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['start"', 'ASC']]  });
+      // PROBAR ORDENANDO X HORAS, MANDARLOS A DB Y DESPUES ORDENAR X UBICACION
       
       const filtrosSigHoras = filterNextHours(rawStoredEvent, currentDate, currentDatePlusOne);
       const filtradoSinRep = [...new Set(filtrosSigHoras)];
@@ -166,5 +173,5 @@ try {
 })
 
 module.exports = {
-  CalendarRoute: server
+  AsignarPedidos: server
 }

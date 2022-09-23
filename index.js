@@ -9,6 +9,7 @@ const { CalendarRoute } = require("./src/routes/calendarRoute");
 const { ClienteRoute } = require("./src/routes/customerRoute");
 const { EventosProgramados } = require("./src/routes/eventosProgramados");
 const { BulkRoute } = require("./src/routes/bulk");
+const { AsignarPedidos} = require("./src/routes/AsignarPedidos")
 
 
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
@@ -29,6 +30,7 @@ app.use("/calendario", CalendarRoute );
 app.use("/cliente", ClienteRoute);
 app.use("/eventosprogramados", EventosProgramados);
 app.use("/bulk", BulkRoute);
+app.use("/AsignarPedidos", AsignarPedidos);
 
 app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")

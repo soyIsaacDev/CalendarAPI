@@ -1,4 +1,5 @@
-
+HOW TO REMOVE DUPLICATES IN AN ARRAY
+https://dev.to/soyleninjs/3-ways-to-remove-duplicates-in-an-array-in-javascript-259o
 
 Utilizo Express para el Direccionamiento de la API (rutas)
     
