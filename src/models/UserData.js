@@ -2,20 +2,11 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "Cliente", 
+        "UserData", 
     {
-        Nombre:{
-            type: DataTypes.STRING,
-            allowNull: false 
-        },
-        Apellido:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         Usuario:{
             type: DataTypes.STRING,
-            allowNull: false,
-            unique:true 
+            allowNull: false 
         },
         Email:{
             type: DataTypes.STRING,
@@ -24,7 +15,8 @@ module.exports = s => {
         Contraseña:{
             type: DataTypes.STRING,
             allowNull: false 
-        }
+        },
+        
     }, {
     timestamps: false,
     });

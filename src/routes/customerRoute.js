@@ -1,27 +1,48 @@
 const server = require("express").Router();
 
-const { Cliente } = require("../db");
+const { Cliente, UserData, Ubicacion } = require("../db");
 
 server.post("/nuevoCliente", async (req, res) => { 
     try {
-      const { Nombre, Apellido_p, Apellido_m, Edad, Ciudad_Residencia, UbicacionCasaLat, UbicacionCasaLong } = req.body;
+      const { Nombre, Apellido, Usuario, Email, Contraseña } = req.body;
       const cliente = await Cliente.findOrCreate({
           where: {
             Nombre
           },
           defaults:{
-            Apellido_p,
-            Apellido_m,
-            Edad,
-            Ciudad_Residencia,
-            UbicacionCasaLat,
-            UbicacionCasaLong
+            Apellido,
+            Usuario,
+            Email,
+            Contraseña
           }    
       });
       res.json(cliente);
     } catch (error) {
       res.send(error);
     }
+});
+
+server.post("/nuevaubicacion", async (req, res) => { 
+  try {
+    const {  Usuario, UbicacionLat, UbicacionLong } = req.body;
+    const cliente = await Cliente.findOne({
+      where:{
+        Usuario: Usuario
+      }
+    });
+    
+    const ubicacionCliente = await Ubicacion.Create({
+        defaults:{
+          UbicacionLat,
+          UbicacionLong
+        }    
+    });
+    ubicacionCliente.setCliente(cliente);
+    
+    res.json(ubicacionCliente);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 server.get("/Clientes", async (req, res) => {

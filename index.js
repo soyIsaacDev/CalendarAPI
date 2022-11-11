@@ -2,6 +2,7 @@
     //https://expressjs.com/es/guide/routing.html
     
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const { StaffRoute  } = require('./src/routes/staffRoute');
@@ -11,7 +12,7 @@ const { EventosProgramados } = require("./src/routes/eventosProgramados");
 const { BulkRoute } = require("./src/routes/bulk");
 const { AsignarPedidos} = require("./src/routes/AsignarPedidos")
 
-
+app.use(cors());
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
 
 app.use(express.static('public')) // --> habilitamos archivos estaticos con el middleware express.static

@@ -2,7 +2,8 @@ var app = require("./index");
 require("dotenv").config();
 const { db } = require("./src/db");
 
-const port = process.env.PORT;
+const port = process.env.PUERTO;
+console.log(port)
 
 const alter = true;
 
