@@ -1,7 +1,7 @@
 const server = require("express").Router();
 const { Op } = require("sequelize");
 
-const { Staff, CalendarEventsA, CalendarEventsReq, Citas } = require("../db");
+const { Cleaner, CalendarEventsA, CalendarEventsReq, Citas } = require("../db");
 
 server.get("/asignarPedidos", async (req, res) => { 
   // Codigo para hacer la distribucion de pedidos a los repartidores a cierta hora
@@ -67,16 +67,16 @@ server.get("/asignarPedidos", async (req, res) => {
 
     if(currentHour === 1 ){
 
-      const staff = await Staff.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
+      const Cleaner = await Cleaner.findAll({   order:[['UbicacionCasaSum', 'ASC']]   });
       const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['start"', 'ASC']]  });
       // PROBAR ORDENANDO X HORAS, MANDARLOS A DB Y DESPUES ORDENAR X UBICACION
       
       const filtrosSigHoras = filterNextHours(rawStoredEvent, currentDate, currentDatePlusOne);
       const filtradoSinRep = [...new Set(filtrosSigHoras)];
       
-      /* for (let i = 0; i < staff.length; i++) {
+      /* for (let i = 0; i < Cleaner.length; i++) {
             const citas = await Citas.create({
-                StaffId: staff[i].id,
+                CleanerId: Cleaner[i].id,
                 ClienteId: eventosFiltrados[i].ClienteId,
                 start: eventosFiltrados[i].start,
                 end: eventosFiltrados[i].end,
@@ -92,7 +92,7 @@ server.get("/asignarPedidos", async (req, res) => {
         // asignar primero eventos de horas especificas y luego los de rango de horas
         // separar citas X primera hora y citas para horas subsequentes
 
-         const faltanXAsignar = eventosFiltrados.length - staff.length;
+         const faltanXAsignar = eventosFiltrados.length - Cleaner.length;
             faltan.push= {
               hora: start,
               faltantes: faltanXAsignar

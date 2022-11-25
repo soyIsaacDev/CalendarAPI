@@ -12,7 +12,7 @@ const connectionString = `${dbEngine}://${dbUserName}:${dbPasword}@${dbHost}:${d
 const sequelize = new Sequelize(connectionString, {
   logging: false, //Loging Deshabilitado,
 });
-//const sequelize = new Sequelize('postgres://postgres:Postgres@localhost:5432/nearbycalendar')
+//const sequelize = new Sequelize('postgres://postgres:Postgres@localhost:5432/nearbycalendar');
 
 try {
   sequelize.authenticate();
@@ -23,38 +23,59 @@ try {
 
 //Modelos DB
 
-const modelStaff = require("./models/Staff");
+const modelCleaner = require("./models/Cleaner");
 const modelEvaluacion = require("./models/Evaluacion");
 const modelCalendarEventsAsig = require("./models/calendarEventsAsig");
 const modelCalendarEventReq = require("./models/calendarEventsReq");
 const modelCliente = require("./models/Cliente");
 const modelCitas = require("./models/citas");
 const modelUserData = require("./models/UserData");
-const modelUbicacion = require("./models/Ubicacion")
+const modelUbicacionCliente = require("./models/UbicacionCliente")
+const modelUbicacionCleaner = require("./models/UbicacionCleaner");
+const modelPedido = require("./models/Pedidos");
+const modelAutos = require("./models/Autos");
+const modelCleanerStatus = require("./models/CleanerStatus")
 
 //pasamos instancia de sequelize a los modelos
-modelStaff(sequelize);
+modelCleaner(sequelize);
 modelEvaluacion(sequelize);
 modelCalendarEventsAsig(sequelize);
 modelCalendarEventReq(sequelize);
 modelCliente(sequelize);
 modelCitas(sequelize);
 modelUserData(sequelize);
-modelUbicacion(sequelize);
+modelUbicacionCliente(sequelize);
+modelUbicacionCleaner(sequelize);
+modelPedido(sequelize);
+modelAutos(sequelize);
+modelCleanerStatus(sequelize);
 
-let {Staff, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, Ubicacion} = sequelize.models;
+let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus} = sequelize.models;
 
 // Relaciones DB
 
-Evaluacion.belongsTo(Staff);
+Evaluacion.belongsTo(Cleaner);
 CalendarEventsReq.belongsTo(Cliente)
 Cliente.hasMany(CalendarEventsReq);
-CalendarEventsAsig.belongsTo(Staff);
-Staff.hasOne(CalendarEventsAsig);
-Cliente.hasMany(Ubicacion);
-Ubicacion.belongsTo(Cliente);
-Staff.hasMany(Ubicacion);
-Ubicacion.belongsTo(Staff)
+CalendarEventsAsig.belongsTo(Cleaner);
+Cleaner.hasOne(CalendarEventsAsig);
+Cliente.hasMany(UbicacionCliente);
+UbicacionCliente.belongsTo(Cliente);
+Cleaner.hasMany(UbicacionCleaner);
+UbicacionCleaner.belongsTo(Cleaner);
+
+Cliente.hasMany(Pedidos);
+Pedidos.belongsTo(Cliente);
+Cleaner.hasMany(Pedidos);
+Pedidos.belongsTo(Cleaner);
+
+Cleaner.hasOne(CleanerStatus);
+CleanerStatus.belongsTo(Cleaner);
+
+Cliente.hasMany(Auto);
+Auto.belongsTo(Cliente);
+
+
 
 module.exports = {
   ...sequelize.models,

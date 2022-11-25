@@ -1,10 +1,10 @@
 const server = require("express").Router();
 
-const { CalendarEventsReq, Cliente, Staff } = require("../db");
+const { CalendarEventsReq, Cliente, Cleaner } = require("../db");
 
 server.get("/crear", async (req, res) => { 
   try {
-    const staff = await Staff.bulkCreate(
+    const staff = await Cleaner.bulkCreate(
       [
         {
           "Nombre": "A",

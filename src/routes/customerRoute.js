@@ -1,6 +1,6 @@
 const server = require("express").Router();
 
-const { Cliente, UserData, Ubicacion } = require("../db");
+const { Cliente, UserData, UbicacionCliente } = require("../db");
 
 server.post("/nuevoCliente", async (req, res) => { 
     try {
@@ -29,15 +29,17 @@ server.post("/nuevaubicacion", async (req, res) => {
       where:{
         Usuario: Usuario
       }
-    });
+      });
     
-    const ubicacionCliente = await Ubicacion.Create({
-        defaults:{
+    const ubicacionCliente = await UbicacionCliente.create(
+      {
           UbicacionLat,
-          UbicacionLong
-        }    
-    });
-    ubicacionCliente.setCliente(cliente);
+          UbicacionLong,
+          ClienteId:cliente.id       
+      }
+    );
+    //ubicacionCliente.setCliente(cliente);
+    //cliente.setUbicacionCliente(ubicacionCliente)
     
     res.json(ubicacionCliente);
   } catch (error) {

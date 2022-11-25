@@ -2,7 +2,7 @@ const {DataTypes} = require ('sequelize');
 
 module.exports = s => {
     s.define(
-        "Ubicacion", 
+        "UbicacionCleaner", 
     {
         UbicacionLat:{
             type: DataTypes.FLOAT,
