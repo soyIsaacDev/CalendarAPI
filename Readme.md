@@ -64,3 +64,26 @@ set(value){
 }
 
    y pasar value = 0 cuando mandemos una nueva instancia del modelo 
+
+**Ordenando en Join Tables**
+
+const ubicacionCleaner = await Cleaner.findAll({
+      Unimos las tablas con include de esta forma
+        include: [
+          {
+            model: CleanerStatus,
+            include: {
+              model: UbicacionCleaner
+            }
+          },
+        ],
+    Ordenamos el primer modelo
+        order:[
+          [CleanerStatus, 'TiempoxDesocupar', 'ASC'],
+    Ordenamos el segundo modelo:
+     Primero incluimos el modelo ordenado anteriormente y ordenamos el segundo modelo.
+          [CleanerStatus, UbicacionCleaner, 'UbicacionCasaSum', 'ASC']
+        ],
+      
+      });
+      res.json(ubicacionCleaner);

@@ -40,29 +40,27 @@ server.get("/asignarPedido", async (req, res) => {
       }) */
       //La variable que afecta la asignacion de Pedidos es el tiempo 
       // total (de translado + tiempo x desocupar)
-      const ubicacionActualCleaner = await UbicacionCleaner.findAll({
-        order:[['UbicacionCasaSum', 'ASC']]
-      });
+
+      //Unir tablas relacionadas y ordenarlas
+      const ubicacionCleaner = await Cleaner.findAll({
+      // unimos tablas con el include
+        include: [
+          {
+            model: CleanerStatus,
+            include: {
+              model: UbicacionCleaner
+            }
+          },
+        ],
+        // Ordenamos el primero modelo y luego el segundo
+        // incluimos el primer modelo que ordenamos y ordenamos el segundo modelo.
+        order:[
+          [CleanerStatus, 'TiempoxDesocupar', 'ASC'],
+          [CleanerStatus, UbicacionCleaner, 'UbicacionCasaSum', 'ASC']
+        ],
       
-      const cleanerActivo = await CleanerStatus.findAll({
-        where: {
-          Status: "activo",
-        },
-        order:[['TiempoxDesocupar', 'ASC']]
       });
-      const cleanerEnServicio = await CleanerStatus.findAll({
-        where: {
-          Status: "enservicio",
-        },
-        order:[['TiempoxDesocupar', 'ASC']]
-      });
-      
-      const cleanersDisponibles = {
-        CleanerId: 2,
-        UbicacionCleaner: 123
-      };
-  
-      res.json(cleanersDisponibles);
+      res.json(ubicacionCleaner);
     } catch (error) {
       res.send(error);
     }
@@ -95,7 +93,7 @@ server.post("/nuevaubicacion", async (req, res) => {
 
 server.get("/cleaner", async (req, res) => {
   try {
-    const cleaner = await Cleaner.findAll({   
+    const cleaner = await UbicacionCleaner.findAll({   
       order:[['UbicacionCasaSum', 'ASC']]   
     });
     res.json(cleaner);
@@ -106,7 +104,52 @@ server.get("/cleaner", async (req, res) => {
 
 server.get("/prueba", async (req, res) => {
   try {
+    const ubicacionCleaner = await Cleaner.findAll({
+      
+       include: [
+        {
+          model: CleanerStatus,
+          include: {
+            model: UbicacionCleaner
+          }
+        },
+      ],
+      
+order:[[CleanerStatus, 'TiempoxDesocupar', 'ASC']],
     
+    });
+    res.json(ubicacionCleaner);
+  } catch (e) {
+    res.send(e)
+  }
+});
+
+server.get("/otraprueba", async (req, res) => {
+  try {
+    const ubicacionCleaner = await Cleaner.findAll({
+      
+      include: [
+        {
+          model: CleanerStatus,
+          include: {
+            model: UbicacionCleaner
+          }
+        },
+      ],
+      order:[
+        [CleanerStatus, 'TiempoxDesocupar', 'ASC'],
+        [CleanerStatus, UbicacionCleaner, 'UbicacionCasaSum', 'ASC']
+      ],
+    
+    });
+    res.json(ubicacionCleaner);
+  } catch (e) {
+    res.send(e)
+  }
+});
+
+server.get("/activos", async (req, res) => {
+  try {
     const cleanerActivo = await CleanerStatus.findAll({
       where: {
         Status: "activo",
@@ -117,7 +160,6 @@ server.get("/prueba", async (req, res) => {
   } catch (e) {
     res.send(e)
   }
-  
 });
 
   module.exports =  server;

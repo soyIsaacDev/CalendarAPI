@@ -61,8 +61,8 @@ CalendarEventsAsig.belongsTo(Cleaner);
 Cleaner.hasOne(CalendarEventsAsig);
 Cliente.hasMany(UbicacionCliente);
 UbicacionCliente.belongsTo(Cliente);
-Cleaner.hasMany(UbicacionCleaner);
-UbicacionCleaner.belongsTo(Cleaner);
+/* Cleaner.hasMany(UbicacionCleaner);
+UbicacionCleaner.belongsTo(Cleaner); */
 
 Cliente.hasMany(Pedidos);
 Pedidos.belongsTo(Cliente);
@@ -71,6 +71,9 @@ Pedidos.belongsTo(Cleaner);
 
 Cleaner.hasOne(CleanerStatus);
 CleanerStatus.belongsTo(Cleaner);
+
+CleanerStatus.hasOne(UbicacionCleaner);
+UbicacionCleaner.belongsTo(CleanerStatus);
 
 Cliente.hasMany(Auto);
 Auto.belongsTo(Cliente);

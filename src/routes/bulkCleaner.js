@@ -97,6 +97,43 @@ server.get("/crear", async (req, res) => {
     );
 
     setTimeout(async () => {
+      const cleanerStatus = await CleanerStatus.bulkCreate(
+        [ /* 'activo', 'inactivo', 'enservicio' */
+          {
+            "CleanerId": 1,
+            "Status" : 'enservicio',
+            "TiempoxDesocupar": 16
+          },
+          {
+              "CleanerId": 2,
+              "Status" : 'activo',
+              "TiempoxDesocupar": 6
+          },
+          {
+              "CleanerId": 3,
+              "Status" : 'enservicio',
+              "TiempoxDesocupar": 4
+          },
+          {
+            "CleanerId": 4,
+            "Status" : 'activo',
+            "TiempoxDesocupar": 4
+          },
+          {
+            "CleanerId": 5,
+            "Status" : 'enservicio',
+            "TiempoxDesocupar": 4
+          },
+          {
+            "CleanerId": 6,
+            "Status" : 'activo',
+            "TiempoxDesocupar": 35
+          },
+        ]
+      );
+    }, 400);
+
+    /* setTimeout(async () => {
       const cleanerLocation = await UbicacionCleaner.bulkCreate(
         [
           {
@@ -125,8 +162,8 @@ server.get("/crear", async (req, res) => {
           },
           {
             "CleanerId": 5,
-            "UbicacionLat" : 35.01,
-            "UbicacionLong": -111.34,
+            "UbicacionLat" : 28.0877,
+            "UbicacionLong": -109.15,
             "UbicacionCasaSum": 0
           },
           {
@@ -137,45 +174,49 @@ server.get("/crear", async (req, res) => {
           },
         ]
       );
-      //res.json(cleanerLocation)
-    }, 500);
-
+    }, 900); */
     setTimeout(async () => {
-      const cleanerStatus = await CleanerStatus.bulkCreate(
-        [ /* 'activo', 'inactivo', 'enservicio' */
+      const cleanerLocation = await UbicacionCleaner.bulkCreate(
+        [
           {
-            "CleanerId": 1,
-            "Status" : 'enservicio',
-            "TiempoxDesocupar": 16
+            "CleanerStatusId": 1,
+            "UbicacionLat" : 29.0877,
+            "UbicacionLong": -110.29,
+            "UbicacionCasaSum": 0
           },
           {
-              "CleanerId": 2,
-              "Status" : 'activo',
-              "TiempoxDesocupar": 12
+              "CleanerStatusId": 2,
+              "UbicacionLat" : 28.0877,
+              "UbicacionLong": -109.15,
+              "UbicacionCasaSum": 0
           },
           {
-              "CleanerId": 3,
-              "Status" : 'enservicio',
-              "TiempoxDesocupar": 22
+              "CleanerStatusId": 3,
+              "UbicacionLat" : 30.01,
+              "UbicacionLong": -110.34,
+              "UbicacionCasaSum": 0
           },
           {
-            "CleanerId": 4,
-            "Status" : 'inactivo',
-            "TiempoxDesocupar": 4
+            "CleanerStatusId": 4,
+            "UbicacionLat" : 30.21,
+            "UbicacionLong": -108.34,
+            "UbicacionCasaSum": 0
           },
           {
-            "CleanerId": 5,
-            "Status" : 'enservicio',
-            "TiempoxDesocupar": 4
+            "CleanerStatusId": 5,
+            "UbicacionLat" : 28.0877,
+            "UbicacionLong": -109.15,
+            "UbicacionCasaSum": 0
           },
           {
-            "CleanerId": 6,
-            "Status" : 'activo',
-            "TiempoxDesocupar": 35
+            "CleanerStatusId": 6,
+            "UbicacionLat" : 31.01,
+            "UbicacionLong": -100.34,
+            "UbicacionCasaSum": 0
           },
         ]
       );
-    }, 800);
+    }, 900);
 
     res.json(cleaner)
   } catch (e) {
