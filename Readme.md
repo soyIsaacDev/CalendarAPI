@@ -65,10 +65,36 @@ set(value){
 
    y pasar value = 0 cuando mandemos una nueva instancia del modelo 
 
+
 **Ordenando en Join Tables**
 
+Unimos tablas con el include
+el orden de los includes afecta como se puede ordenar
+se debe hacer los includes segun como deseamos ordenar
+
 const ubicacionCleaner = await Cleaner.findAll({
-      Unimos las tablas con include de esta forma
+        include: [
+          {
+            model: UbicacionCleaner
+          },
+          {
+            model: CleanerStatus
+          }
+        ],
+        // Ordenamos el primero modelo y luego el segundo.
+        order:[
+          [ UbicacionCleaner, 'UbicacionCasaSum', 'ASC'],
+          [CleanerStatus, 'TiempoxDesocupar', 'ASC']
+        ]
+      });
+      res.json(ubicacionCleaner);
+
+**Ordenando en Nested Tables**
+
+Unimos las tablas con include de esta forma
+
+const ubicacionCleaner = await Cleaner.findAll({
+      
         include: [
           {
             model: CleanerStatus,

@@ -24,6 +24,7 @@ server.post("/nuevoPedido", async (req, res) => {
         auto: "Definir Auto",
         UbicacionLat: ubicacionCliente.UbicacionLat,
         UbicacionLong: ubicacionCliente.UbicacionLong,
+        //UbiacionSum: ubicacionCliente.UbicacionCasaSum
       })
       res.json(pedido);
     } catch (error) {
@@ -31,36 +32,49 @@ server.post("/nuevoPedido", async (req, res) => {
     }
 });
 
-server.get("/asignarPedido", async (req, res) => { 
+server.post("/asignarPedido", async (req, res) => { 
     try {
       const { ClienteId } = req.body;
-       /*
+       
       const pedido = await Pedidos.findOne({
         clienteId: ClienteId,
-      }) */
+      })
       //La variable que afecta la asignacion de Pedidos es el tiempo 
       // total (de translado + tiempo x desocupar)
 
-      //Unir tablas relacionadas y ordenarlas
-      const ubicacionCleaner = await Cleaner.findAll({
+      //Como unir tablas relacionadas y ordenarlas
+        // Aqui buscamos que cleaners estan disponibles, que 
+        // tan cerca del cliente y que tan rapido se desocupan
+      const cleanerDisponible = await Cleaner.findAll({
       // unimos tablas con el include
+      // el orden de los includes afecta como se puede ordenar
+      // se debe hacer los includes segun como deseamos ordenar
         include: [
           {
-            model: CleanerStatus,
-            include: {
-              model: UbicacionCleaner
-            }
+            model: UbicacionCleaner
           },
+          {
+            model: CleanerStatus
+          }
         ],
-        // Ordenamos el primero modelo y luego el segundo
-        // incluimos el primer modelo que ordenamos y ordenamos el segundo modelo.
+        // Ordenamos el primero modelo y luego el segundo.
         order:[
-          [CleanerStatus, 'TiempoxDesocupar', 'ASC'],
-          [CleanerStatus, UbicacionCleaner, 'UbicacionCasaSum', 'ASC']
+          [ UbicacionCleaner, 'UbicacionCasaSum', 'ASC'],
+          [CleanerStatus, 'TiempoxDesocupar', 'ASC']
         ],
-      
       });
-      res.json(ubicacionCleaner);
+
+      //cleanerDisponible[0].CleanerStatus.TiempoxDesocupar;
+      for (let i = 0; i < cleanerDisponible.length; i++) {
+        const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
+        if(tiempoxDesocupar < 10){
+          pedido.CleanerId = cleanerDisponible[i].id;
+          await pedido.save;
+          
+        }
+      }
+      res.json(pedido);
+
     } catch (error) {
       res.send(error);
     }

@@ -122,7 +122,7 @@ server.get("/crear", async (req, res) => {
           {
             "CleanerId": 5,
             "Status" : 'enservicio',
-            "TiempoxDesocupar": 16
+            "TiempoxDesocupar": 4
           },
           {
             "CleanerId": 6,
@@ -133,7 +133,7 @@ server.get("/crear", async (req, res) => {
       );
     }, 400);
 
-    setTimeout(async () => {
+    /* setTimeout(async () => {
       const cleanerLocation = await UbicacionCleaner.bulkCreate(
         [
           {
@@ -174,8 +174,8 @@ server.get("/crear", async (req, res) => {
           },
         ]
       );
-    }, 900);
-    /* setTimeout(async () => {
+    }, 900); */
+    setTimeout(async () => {
       const cleanerLocation = await UbicacionCleaner.bulkCreate(
         [
           {
@@ -216,7 +216,7 @@ server.get("/crear", async (req, res) => {
           },
         ]
       );
-    }, 900); */
+    }, 900);
 
     res.json(cleaner)
   } catch (e) {
