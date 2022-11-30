@@ -65,6 +65,7 @@ server.get("/asignarEventos", async (req, res) => {
       const rawStoredEvent = await CalendarEventsReq.findAll({ order:[['UbicacionSum', 'ASC']]  });
       
       const filtrosSigHoras = filterNextHours(rawStoredEvent, currentDate, currentDatePlusOne);
+      // con new Set evitamos eventos repetidos
       const filtradoSinRep = [...new Set(filtrosSigHoras)];
       
       /* for (let i = 0; i < staff.length; i++) {
@@ -78,8 +79,7 @@ server.get("/asignarEventos", async (req, res) => {
         } */
 
       res.json(filtradoSinRep)
-      
-    
+
       /*
         // asignar primero 1.- eventos recurrentes, 2 .- solicitados con tiempo de anticipacion 3.-luego los mas recientes
         // asignar primero eventos de horas especificas y luego los de rango de horas
@@ -93,10 +93,8 @@ server.get("/asignarEventos", async (req, res) => {
 
          
       }*/
-      //res.json(eventosFiltrados);
       // Si sobran eventos como asignarlos?
       
-      //res.json({CitasProgramadas: "Ok"});
     }
 
   } catch (error) {

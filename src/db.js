@@ -11,7 +11,7 @@ const dbName = process.env.DB_NAME;
 const connectionString = `${dbEngine}://${dbUserName}:${dbPasword}@${dbHost}:${dbPort}/${dbName}`;
 const sequelize = new Sequelize(connectionString, {
   logging: false, //Loging Deshabilitado,
-});
+})
 //const sequelize = new Sequelize('postgres://postgres:Postgres@localhost:5432/nearbycalendar');
 
 try {

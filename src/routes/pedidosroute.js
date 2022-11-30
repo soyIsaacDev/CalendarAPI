@@ -5,39 +5,46 @@ const { Cliente, Pedidos, UbicacionCliente,        Cleaner, UbicacionCleaner, Cl
 
 server.post("/nuevoPedido", async (req, res) => { 
     try {
-      const { ClienteId, Hora, Tipo } = req.body;
-      const cliente = await Cliente.findOne({
+      const { ClienteId, Tipo, Hora } = req.body;
+      /* const cliente = await Cliente.findOne({
           where: {
             id: ClienteId
           } 
-      });
-      const ubicacionCliente = await UbicacionCliente.findOne({
+      }); */
+       const ubicacionCliente = await UbicacionCliente.findOne({
         where: {
           id: ClienteId
         } 
     });
-      const pedido = await Pedidos.create({
-        clienteId: ClienteId,
-        kind: Tipo,
-        colorId: 1,
-        start: Hora,
-        auto: "Definir Auto",
-        UbicacionLat: ubicacionCliente.UbicacionLat,
-        UbicacionLong: ubicacionCliente.UbicacionLong,
-        //UbiacionSum: ubicacionCliente.UbicacionCasaSum
-      })
+    
+      const pedido = await Pedidos.findOrCreate({
+        where: { clienteId: ClienteId},
+        defaults:{
+          kind: Tipo,
+          colorId: 1,
+          auto: "Definir Auto",
+          start: Hora,
+          ubicacionLat: ubicacionCliente.UbicacionLat,
+          ubicacionLong: ubicacionCliente.UbicacionLong,
+          //UbiacionSum: ubicacionCliente.UbicacionCasaSum
+
+        }
+      });
+
       res.json(pedido);
     } catch (error) {
       res.send(error);
     }
 });
 
-server.post("/asignarPedido", async (req, res) => { 
+server.get("/asignarPedido", async (req, res) => { 
     try {
       const { ClienteId } = req.body;
        
       const pedido = await Pedidos.findOne({
-        clienteId: ClienteId,
+        where: {
+          clienteId: 2,
+        }
       })
       //La variable que afecta la asignacion de Pedidos es el tiempo 
       // total (de translado + tiempo x desocupar)
@@ -68,7 +75,7 @@ server.post("/asignarPedido", async (req, res) => {
       for (let i = 0; i < cleanerDisponible.length; i++) {
         const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
         if(tiempoxDesocupar < 10){
-          pedido.CleanerId = cleanerDisponible[i].id;
+          pedido.cleanerId = cleanerDisponible[i].id;
           await pedido.save;
           
         }

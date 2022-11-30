@@ -1,6 +1,7 @@
 const server = require("express").Router();
 
-const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus } = require("../db");
+const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus, UbicacionCliente } = require("../db");
+
 
 server.get("/crear", async (req, res) => { 
   try {
@@ -51,50 +52,7 @@ server.get("/crear", async (req, res) => {
       ]
     );
     
-    const clientes = await Cliente.bulkCreate(
-      [
-        {
-          "Nombre": "1",
-          "Apellido": "1",
-          "Usuario": "1",
-          "Email": "klkjdsfdsaekl",
-          "Contraseña": "Hermosillo"
-        },
-        {
-          "Nombre": "2",
-          "Apellido": "2",
-          "Usuario": "2",
-          "Email": "retjdsfdsaekl",
-          "Contraseña": "Hermosillo"
-        },
-        {
-          "Nombre": "3",
-          "Apellido": "3",
-          "Usuario": "3",
-          "Email": "erjdsfdsaekl",
-          "Contraseña": "Hermosillo"
-        },{
-          "Nombre": "4",
-          "Apellido": "4",
-          "Usuario": "4",
-          "Email": "reaekl",
-          "Contraseña": "Hermosillo"
-        },{
-          "Nombre": "5",
-          "Apellido": "5",
-          "Usuario": "5",
-          "Email": "erjds4654aekl",
-          "Contraseña": "Hermosillo"
-        },
-        {
-          "Nombre": "6",
-          "Apellido": "6",
-          "Usuario": "6",
-          "Email": "ew21",
-          "Contraseña": "Hermosillo"
-        }
-      ]
-    );
+    
 
     setTimeout(async () => {
       const cleanerStatus = await CleanerStatus.bulkCreate(
@@ -174,49 +132,96 @@ server.get("/crear", async (req, res) => {
           },
         ]
       );
-    }, 900);
-    /* setTimeout(async () => {
-      const cleanerLocation = await UbicacionCleaner.bulkCreate(
+
+      const clientes = await Cliente.bulkCreate(
         [
           {
-            "CleanerStatusId": 1,
-            "UbicacionLat" : 29.0877,
-            "UbicacionLong": -110.29,
-            "UbicacionCasaSum": 0
+            "Nombre": "1",
+            "Apellido": "1",
+            "Usuario": "1",
+            "Email": "klkjdsfdsaekl",
+            "Contraseña": "Hermosillo"
           },
           {
-              "CleanerStatusId": 2,
+            "Nombre": "2",
+            "Apellido": "2",
+            "Usuario": "2",
+            "Email": "retjdsfdsaekl",
+            "Contraseña": "Hermosillo"
+          },
+          {
+            "Nombre": "3",
+            "Apellido": "3",
+            "Usuario": "3",
+            "Email": "erjdsfdsaekl",
+            "Contraseña": "Hermosillo"
+          },{
+            "Nombre": "4",
+            "Apellido": "4",
+            "Usuario": "4",
+            "Email": "reaekl",
+            "Contraseña": "Hermosillo"
+          },{
+            "Nombre": "5",
+            "Apellido": "5",
+            "Usuario": "5",
+            "Email": "erjds4654aekl",
+            "Contraseña": "Hermosillo"
+          },
+          {
+            "Nombre": "6",
+            "Apellido": "6",
+            "Usuario": "6",
+            "Email": "ew21",
+            "Contraseña": "Hermosillo"
+          }
+        ]
+      );
+
+      setTimeout(async () => {
+        const clienteLocation = await UbicacionCliente.bulkCreate(
+          [
+            {
+              "ClienteId": 1,
+              "UbicacionLat" : 29.0877,
+              "UbicacionLong": -110.29,
+              "UbicacionCasaSum": 0
+            },
+            {
+                "ClienteId": 2,
+                "UbicacionLat" : 28.0877,
+                "UbicacionLong": -109.15,
+                "UbicacionCasaSum": 0
+            },
+            {
+                "ClienteId": 3,
+                "UbicacionLat" : 30.01,
+                "UbicacionLong": -110.34,
+                "UbicacionCasaSum": 0
+            },
+            {
+              "ClienteId": 4,
+              "UbicacionLat" : 30.21,
+              "UbicacionLong": -108.34,
+              "UbicacionCasaSum": 0
+            },
+            {
+              "ClienteId": 5,
               "UbicacionLat" : 28.0877,
               "UbicacionLong": -109.15,
               "UbicacionCasaSum": 0
-          },
-          {
-              "CleanerStatusId": 3,
-              "UbicacionLat" : 30.01,
-              "UbicacionLong": -110.34,
+            },
+            {
+              "ClienteId": 6,
+              "UbicacionLat" : 31.01,
+              "UbicacionLong": -100.34,
               "UbicacionCasaSum": 0
-          },
-          {
-            "CleanerStatusId": 4,
-            "UbicacionLat" : 30.21,
-            "UbicacionLong": -108.34,
-            "UbicacionCasaSum": 0
-          },
-          {
-            "CleanerStatusId": 5,
-            "UbicacionLat" : 28.0877,
-            "UbicacionLong": -109.15,
-            "UbicacionCasaSum": 0
-          },
-          {
-            "CleanerStatusId": 6,
-            "UbicacionLat" : 31.01,
-            "UbicacionLong": -100.34,
-            "UbicacionCasaSum": 0
-          },
-        ]
-      );
-    }, 900); */
+            },
+          ]
+        ); 
+      });
+
+    }, 900);
 
     res.json(cleaner)
   } catch (e) {
