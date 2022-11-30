@@ -4,14 +4,7 @@ module.exports = s => {
     s.define(
         "Pedidos", 
     {
-        clienteId:{
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        cleanerId:{
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
+        
         kind:{
             type: DataTypes.STRING,
             allowNull: false

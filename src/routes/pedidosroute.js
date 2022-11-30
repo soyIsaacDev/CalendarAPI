@@ -18,7 +18,7 @@ server.post("/nuevoPedido", async (req, res) => {
     });
     
       const pedido = await Pedidos.findOrCreate({
-        where: { clienteId: ClienteId},
+        where: { ClienteId: ClienteId},
         defaults:{
           kind: Tipo,
           colorId: 1,
@@ -26,7 +26,9 @@ server.post("/nuevoPedido", async (req, res) => {
           start: Hora,
           ubicacionLat: ubicacionCliente.UbicacionLat,
           ubicacionLong: ubicacionCliente.UbicacionLong,
+          
           //UbiacionSum: ubicacionCliente.UbicacionCasaSum
+          
 
         }
       });
@@ -37,15 +39,14 @@ server.post("/nuevoPedido", async (req, res) => {
     }
 });
 
-server.get("/asignarPedido", async (req, res) => { 
+server.get("/asignarPedido/:idCliente", async (req, res) => { 
     try {
-      const { ClienteId } = req.body;
-       
+      let { idCliente } = req.params;
       const pedido = await Pedidos.findOne({
         where: {
-          clienteId: 2,
+          ClienteId: idCliente,
         }
-      })
+      });
       //La variable que afecta la asignacion de Pedidos es el tiempo 
       // total (de translado + tiempo x desocupar)
 
@@ -71,17 +72,16 @@ server.get("/asignarPedido", async (req, res) => {
         ],
       });
 
-      //cleanerDisponible[0].CleanerStatus.TiempoxDesocupar;
-      for (let i = 0; i < cleanerDisponible.length; i++) {
-        const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
-        if(tiempoxDesocupar < 10){
-          pedido.cleanerId = cleanerDisponible[i].id;
-          await pedido.save;
-          
+      if(pedido){
+        for (let i = 0; i < cleanerDisponible.length; i++) {
+          const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
+          if(tiempoxDesocupar < 10){
+            pedido.CleanerId = cleanerDisponible[i].id;
+            await pedido.save;
+          }
         }
       }
-      res.json(pedido);
-
+      res.json(pedido? pedido : "Ese cliente no tiene un pedido aun");
     } catch (error) {
       res.send(error);
     }
@@ -183,9 +183,20 @@ server.get("/activos", async (req, res) => {
   }
 });
 
-  module.exports =  server;
+server.get("/pedidos", async (req, res) => {
+  try {
+    const pedidos = await Pedidos.findAll({
+    });
+    res.json(pedidos);
+  } catch (e) {
+    res.send(e)
+  }
+});
 
-  
+
+
+module.exports =  server;
+
 module.exports = {
   PedidosRoute: server
 }
