@@ -50,6 +50,11 @@ server.post("/nuevaubicacion", async (req, res) => {
 server.get("/Clientes", async (req, res) => {
   try {
     const cliente = await Cliente.findAll({
+      include: [
+        {
+          model: UbicacionCliente
+        },
+      ]
     });
     res.json(cliente);
   } catch (error) {     

@@ -4,9 +4,9 @@ module.exports = s => {
     s.define(
         "Evaluacion", 
     {
-        Evaluacion:{
-            type: DataTypes.STRING,
-            allowNull: false
+        Calificacion:{
+            type: DataTypes.FLOAT,
+            allowNull: true
         }
     }, {
     timestamps: false,

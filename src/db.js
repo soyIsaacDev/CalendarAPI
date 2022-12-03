@@ -35,6 +35,7 @@ const modelUbicacionCleaner = require("./models/UbicacionCleaner");
 const modelPedido = require("./models/Pedidos");
 const modelAutos = require("./models/Autos");
 const modelCleanerStatus = require("./models/CleanerStatus")
+const modelServiciosOfrecidos = require("./models/ServiciosOfrecidos");
 
 //pasamos instancia de sequelize a los modelos
 modelCleaner(sequelize);
@@ -49,12 +50,14 @@ modelUbicacionCleaner(sequelize);
 modelPedido(sequelize);
 modelAutos(sequelize);
 modelCleanerStatus(sequelize);
+modelServiciosOfrecidos(sequelize);
 
-let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus} = sequelize.models;
+let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus, ServiciosOfrecidos} = sequelize.models;
 
 // Relaciones DB
 
 Evaluacion.belongsTo(Cleaner);
+Cleaner.hasOne(Evaluacion);
 CalendarEventsReq.belongsTo(Cliente)
 Cliente.hasMany(CalendarEventsReq);
 CalendarEventsAsig.belongsTo(Cleaner);

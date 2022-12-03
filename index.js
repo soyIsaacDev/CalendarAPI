@@ -12,6 +12,8 @@ const { EventosProgramados } = require("./src/routes/eventosProgramados");
 const { BulkRoute } = require("./src/routes/bulkCleaner");
 const { AsignarPedidos} = require("./src/routes/AsignarPedidos")
 const { PedidosRoute } = require("./src/routes/pedidosroute")
+const { ServiciosOfrecidosRoute } = require("./src/routes/serviciosOfrecidosRoute")
+const { Administracion } = require("./src/routes/Administrador")
 
 app.use(cors());
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
@@ -34,6 +36,9 @@ app.use("/eventosprogramados", EventosProgramados);
 app.use("/bulk", BulkRoute);
 app.use("/AsignarPedidos", AsignarPedidos);
 app.use("/Pedidos", PedidosRoute);
+//app.use("/administracion", Administracion);
+app.use("/admin/servicios", ServiciosOfrecidosRoute);
+
 
 app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")

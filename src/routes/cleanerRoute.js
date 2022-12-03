@@ -1,6 +1,6 @@
 const server = require("express").Router();
 
-const { Cleaner, UbicacionCleaner, CleanerStatus } = require("../db");
+const { Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db");
 
 server.post("/nuevoCleaner", async (req, res) => { 
     try {
@@ -80,7 +80,40 @@ server.post("/actualizarTiempoxDesocupar", async (req, res) => {
 server.get("/cleaner", async (req, res) => {
   try {
     const cleaner = await Cleaner.findAll({ 
-              
+      include: [
+        {
+          model: UbicacionCleaner
+        },
+        {
+          model: CleanerStatus
+        },
+        {
+          model: Evaluacion
+        }
+      ]     
+    });
+    res.json(cleaner);
+  } catch (error) {     
+    res.send(error);
+  }
+});
+
+server.get("/unCleaner/:cleanerId", async (req, res) => {
+  try {
+    let { cleanerId } = req.params;
+    const cleaner = await Cleaner.findOne({ 
+      where: { id: cleanerId },
+      include: [
+        {
+          model: UbicacionCleaner
+        },
+        {
+          model: CleanerStatus
+        },
+        {
+          model: Evaluacion
+        }
+      ]     
     });
     res.json(cleaner);
   } catch (error) {     

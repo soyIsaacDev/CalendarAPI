@@ -1,6 +1,6 @@
 const server = require("express").Router();
 
-const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus, UbicacionCliente } = require("../db");
+const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus, UbicacionCliente, ServiciosOfrecidos, Evaluacion } = require("../db");
 
 
 server.get("/crear", async (req, res) => { 
@@ -70,12 +70,12 @@ server.get("/crear", async (req, res) => {
           {
               "CleanerId": 3,
               "Status" : 'enservicio',
-              "TiempoxDesocupar": 4
+              "TiempoxDesocupar": 20
           },
           {
             "CleanerId": 4,
-            "Status" : 'activo',
-            "TiempoxDesocupar": 4
+            "Status" : 'enservicio',
+            "TiempoxDesocupar": 12
           },
           {
             "CleanerId": 5,
@@ -114,8 +114,8 @@ server.get("/crear", async (req, res) => {
           },
           {
             "CleanerId": 4,
-            "UbicacionLat" : 30.21,
-            "UbicacionLong": -108.34,
+            "UbicacionLat" : 29.077,
+            "UbicacionLong": -110.996,
             "UbicacionCasaSum": 0
           },
           {
@@ -146,7 +146,7 @@ server.get("/crear", async (req, res) => {
             "Nombre": "2",
             "Apellido": "2",
             "Usuario": "2",
-            "Email": "retjdsfdsaekl",
+            "Email": "Quintas",
             "Contraseña": "Hermosillo"
           },
           {
@@ -189,8 +189,8 @@ server.get("/crear", async (req, res) => {
             },
             {
                 "ClienteId": 2,
-                "UbicacionLat" : 28.0877,
-                "UbicacionLong": -109.15,
+                "UbicacionLat" : 29.08,
+                "UbicacionLong": -110.99,
                 "UbicacionCasaSum": 0
             },
             {
@@ -222,6 +222,64 @@ server.get("/crear", async (req, res) => {
       });
 
     }, 900);
+
+    setTimeout(async () => {
+      const servicios = await ServiciosOfrecidos.bulkCreate(
+        [
+          {
+            "TipoDeServicio": "LavadoyAspirado",
+            "TamañoAuto" : "Chico",
+            "Precio": 120
+          },
+          {
+            "TipoDeServicio": "LavadoyAspirado",
+            "TamañoAuto" : "Grande",
+            "Precio": 130
+          },
+          {
+            "TipoDeServicio": "LavadoExterior",
+            "TamañoAuto" : "Chico",
+            "Precio": 80
+          },
+          {
+            "TipoDeServicio": "LavadoExterior",
+            "TamañoAuto" : "Grande",
+            "Precio": 90
+          },
+        ]
+        ); 
+      }, 100);
+
+      setTimeout(async () => {
+        const evaluacion = await Evaluacion.bulkCreate(
+          [
+            {
+              "CleanerId": 1,
+              "Calificacion" : 4
+            },
+            {
+              "CleanerId": 2,
+              "Calificacion" : 4.5
+            },
+            {
+              "CleanerId": 3,
+              "Calificacion" : 3.5
+            },
+            {
+              "CleanerId": 4,
+              "Calificacion" : 2
+            },
+            {
+              "CleanerId": 5,
+              "Calificacion" : 5
+            },
+            {
+              "CleanerId": 6,
+              "Calificacion" : 4
+            },
+          ]
+          ); 
+        }, 100);
 
     res.json(cleaner)
   } catch (e) {

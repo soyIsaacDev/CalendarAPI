@@ -71,13 +71,33 @@ server.get("/asignarPedido/:idCliente", async (req, res) => {
           [CleanerStatus, 'TiempoxDesocupar', 'ASC']
         ],
       });
-
+      
       if(pedido){
         for (let i = 0; i < cleanerDisponible.length; i++) {
+          const statuscleaner = cleanerDisponible[i].CleanerStatus.Status;
           const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
-          if(tiempoxDesocupar < 10){
+          var ubicacionTotalCleaner = cleanerDisponible[i].UbicacionCleaners[0].UbicacionCasaSum; 
+          var ubicacionTotalCliente = pedido.UbicacionSum;
+          console.log("i = "+i +" Tiempo "+tiempoxDesocupar+" ubicacionCleaner "+ubicacionTotalCleaner)
+          const distancia = ubicacionTotalCleaner - ubicacionTotalCliente
+          if(distancia < 0){
+            distancia*-1;
+          }
+          if(tiempoxDesocupar < 10 && distancia < 0.5){
             pedido.CleanerId = cleanerDisponible[i].id;
-            await pedido.save;
+            await pedido.save();
+          }
+          else if (tiempoxDesocupar < 10 && distancia < 3.5){
+            pedido.CleanerId = cleanerDisponible[i].id;
+            await pedido.save();
+          }
+          else if (tiempoxDesocupar < 15 && distancia < 0.5){
+            pedido.CleanerId = cleanerDisponible[i].id;
+            await pedido.save();
+          }
+          else if (tiempoxDesocupar < 15 && distancia < 1.5){
+            pedido.CleanerId = cleanerDisponible[i].id;
+            await pedido.save();
           }
         }
       }
