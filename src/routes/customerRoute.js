@@ -24,10 +24,10 @@ server.post("/nuevoCliente", async (req, res) => {
 
 server.post("/nuevaubicacion", async (req, res) => { 
   try {
-    const {  Usuario, UbicacionLat, UbicacionLong } = req.body;
+    const {  ClienteId, UbicacionLat, UbicacionLong } = req.body;
     const cliente = await Cliente.findOne({
       where:{
-        Usuario: Usuario
+        id:ClienteId
       }
       });
     

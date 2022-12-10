@@ -227,22 +227,22 @@ server.get("/crear", async (req, res) => {
       const servicios = await ServiciosOfrecidos.bulkCreate(
         [
           {
-            "TipoDeServicio": "LavadoyAspirado",
+            "TipoDeServicio": "Lavado y Aspirado",
             "TamañoAuto" : "Chico",
             "Precio": 120
           },
           {
-            "TipoDeServicio": "LavadoyAspirado",
+            "TipoDeServicio": "Lavado y Aspirado",
             "TamañoAuto" : "Grande",
             "Precio": 130
           },
           {
-            "TipoDeServicio": "LavadoExterior",
+            "TipoDeServicio": "Lavado Exterior",
             "TamañoAuto" : "Chico",
             "Precio": 80
           },
           {
-            "TipoDeServicio": "LavadoExterior",
+            "TipoDeServicio": "Lavado Exterior",
             "TamañoAuto" : "Grande",
             "Precio": 90
           },

@@ -1,22 +1,26 @@
 const server = require("express").Router();
 
-const { Cliente, Pedidos, UbicacionCliente,        Cleaner, UbicacionCleaner, CleanerStatus } = require("../db");
+const { Cliente, Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db");
 
 
 server.post("/nuevoPedido", async (req, res) => { 
     try {
       const { ClienteId, Tipo, Hora } = req.body;
+      console.log("PEDIDOOOOO")
       /* const cliente = await Cliente.findOne({
           where: {
             id: ClienteId
           } 
       }); */
-       const ubicacionCliente = await UbicacionCliente.findOne({
+      const ubicacionCliente = await UbicacionCliente.findAll({
         where: {
-          id: ClienteId
+          ClienteId: ClienteId
         } 
-    });
-    
+      });
+      const ultimaUbicacionClienteLat = ubicacionCliente[ubicacionCliente.length-1].UbicacionLat;
+      const ultimaUbicacionClienteLong = ubicacionCliente[ubicacionCliente.length-1].UbicacionLong;
+      console.log("ultimaUbicacionClienteLat "+ ultimaUbicacionClienteLat)
+      console.log("ultimaUbicacionClienteLong "+ ultimaUbicacionClienteLong)
       const pedido = await Pedidos.findOrCreate({
         where: { ClienteId: ClienteId},
         defaults:{
@@ -24,24 +28,122 @@ server.post("/nuevoPedido", async (req, res) => {
           colorId: 1,
           auto: "Definir Auto",
           start: Hora,
-          ubicacionLat: ubicacionCliente.UbicacionLat,
-          ubicacionLong: ubicacionCliente.UbicacionLong,
+          ubicacionLat: ultimaUbicacionClienteLat,
+          ubicacionLong: ultimaUbicacionClienteLong,
           
           //UbiacionSum: ubicacionCliente.UbicacionCasaSum
           
 
         }
       });
-
       res.json(pedido);
     } catch (error) {
       res.send(error);
     }
 });
 
-server.get("/asignarPedido/:idCliente", async (req, res) => { 
+server.post("/solicitarQuicky", async (req, res) => { 
+  try {
+    console.log("Solicitando Quicky")
+    const { ClienteId, Tipo, Hora } = req.body;
+    let CleanerId = null;
+
+    const ubicacionCliente = await UbicacionCliente.findAll({
+      where: {
+        ClienteId: ClienteId
+      } 
+    });
+    const ubicacionTotalCliente = ubicacionCliente[ubicacionCliente.length-1].UbicacionCasaSum;
+    
+    //La variable que afecta la asignacion de Pedidos es el tiempo 
+    // total (de translado + tiempo x desocupar)
+
+    //Como unir tablas relacionadas y ordenarlas
+      
+    const cleanerDisponible = await Cleaner.findAll({
+    // unimos tablas con el include
+    // el orden de los includes afecta como se puede ordenar
+    // se debe hacer los includes segun como deseamos ordenar
+      include: [
+        {
+          model: UbicacionCleaner
+        },
+        {
+          model: CleanerStatus
+        },
+        {
+          model: Evaluacion
+        }
+      ],
+      // Ordenamos el primero modelo y luego el segundo.
+      order:[
+        [ UbicacionCleaner, 'UbicacionCasaSum', 'ASC'],
+        [CleanerStatus, 'TiempoxDesocupar', 'ASC']
+      ],
+    });
+      // Aqui buscamos que cleaners estan disponibles, que 
+      // tan cerca del cliente y que tan rapido se desocupan
+    for (let i = 0; i < cleanerDisponible.length; i++) {
+      const statuscleaner = cleanerDisponible[i].CleanerStatus.Status;
+      const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
+      var ubicacionTotalCleaner = cleanerDisponible[i].UbicacionCleaners[0].UbicacionCasaSum; 
+      
+      console.log("i = "+i +" Tiempo "+tiempoxDesocupar+" ubicacionCleaner "+ubicacionTotalCleaner)
+      const distancia = ubicacionTotalCleaner - ubicacionTotalCliente
+      if(distancia < 0){
+        distancia*-1;
+      }
+      if(tiempoxDesocupar < 10 && distancia < 0.5){
+        //pedido.CleanerId = cleanerDisponible[i].id;
+
+        /* 
+          MODIFICAR ESTO PARA QUE NO GUARDE EL CLEANER HASTA LLAMAR A LA RUTA ASIGNARPEDIDO
+        */
+        CleanerId = cleanerDisponible[i].id;
+      }
+      else if (tiempoxDesocupar < 10 && distancia < 3.5){
+        CleanerId = cleanerDisponible[i].id;
+      }
+      else if (tiempoxDesocupar < 15 && distancia < 0.5){
+        CleanerId = cleanerDisponible[i].id;
+      }
+      else if (tiempoxDesocupar < 15 && distancia < 1.5){
+        CleanerId = cleanerDisponible[i].id;
+      }
+    }
+
+    const cleaner = cleanerDisponible[4]
+    
+    res.json(cleaner? cleaner : "No hay cleaner disponibles");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/ubicacionCliente/:ClienteId", async (req, res) => { 
+  try {
+    const { ClienteId } = req.params;
+    console.log("PEDIDOOOOO")
+    const cliente = await Cliente.findOne({
+        where: {
+          id: ClienteId
+        } 
+    });
+     const ubicacionCliente = await UbicacionCliente.findAll({
+      where: {
+        ClienteId: ClienteId
+      } 
+    });
+    res.json(ubicacionCliente);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/buscarCleanerCercano/:idCliente", async (req, res) => { 
     try {
       let { idCliente } = req.params;
+      let CleanerId = null;
       const pedido = await Pedidos.findOne({
         where: {
           ClienteId: idCliente,
@@ -84,27 +186,45 @@ server.get("/asignarPedido/:idCliente", async (req, res) => {
             distancia*-1;
           }
           if(tiempoxDesocupar < 10 && distancia < 0.5){
-            pedido.CleanerId = cleanerDisponible[i].id;
-            await pedido.save();
+            //pedido.CleanerId = cleanerDisponible[i].id;
+
+            /* 
+              MODIFICAR ESTO PARA QUE NO GUARDE EL CLEANER HASTA LLAMAR A LA RUTA ASIGNARPEDIDO
+            */
+            CleanerId = cleanerDisponible[i].id;
           }
           else if (tiempoxDesocupar < 10 && distancia < 3.5){
-            pedido.CleanerId = cleanerDisponible[i].id;
-            await pedido.save();
+            CleanerId = cleanerDisponible[i].id;
           }
           else if (tiempoxDesocupar < 15 && distancia < 0.5){
-            pedido.CleanerId = cleanerDisponible[i].id;
-            await pedido.save();
+            CleanerId = cleanerDisponible[i].id;
           }
           else if (tiempoxDesocupar < 15 && distancia < 1.5){
-            pedido.CleanerId = cleanerDisponible[i].id;
-            await pedido.save();
+            CleanerId = cleanerDisponible[i].id;
           }
         }
       }
-      res.json(pedido? pedido : "Ese cliente no tiene un pedido aun");
+      res.json(pedido? CleanerId : "Ese cliente no tiene un pedido aun");
     } catch (error) {
       res.send(error);
     }
+});
+
+server.get("/asignarPedido/:idCliente/:CleanerId", async (req, res) => { 
+  try {
+    let { idCliente, CleanerId } = req.params;
+    const pedido = await Pedidos.findOne({
+      where: {
+        ClienteId: idCliente,
+      }
+    });
+    pedido.CleanerId = CleanerId;
+    await pedido.save();
+    
+    res.json(pedido? pedido : "Ese cliente no tiene un pedido aun");
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 server.post("/nuevaubicacion", async (req, res) => { 
