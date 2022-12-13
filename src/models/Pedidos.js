@@ -75,6 +75,10 @@ module.exports = s => {
                 const sumaUbic = this.getDataValue('ubicacionLat') + this.getDataValue('ubicacionLong')
                 this.setDataValue('UbicacionSum', value + sumaUbic );
             }
+        },
+        Terminado:{
+            type:DataTypes.STRING,
+            allowNull:false,
         }
     }, {
     timestamps: false,

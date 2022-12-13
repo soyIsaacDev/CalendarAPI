@@ -90,7 +90,8 @@ server.get("/cleaner", async (req, res) => {
         {
           model: Evaluacion
         }
-      ]     
+      ],
+      order:[['UbicacionCasaSum', 'ASC']]    
     });
     res.json(cleaner);
   } catch (error) {     
@@ -118,6 +119,20 @@ server.get("/unCleaner/:cleanerId", async (req, res) => {
     res.json(cleaner);
   } catch (error) {     
     res.send(error);
+  }
+});
+
+server.get("/activos", async (req, res) => {
+  try {
+    const cleanerActivo = await CleanerStatus.findAll({
+      where: {
+        Status: "activo",
+      },
+      order:[['TiempoxDesocupar', 'ASC']]
+    });
+    res.json(cleanerActivo);
+  } catch (e) {
+    res.send(e)
   }
 });
 

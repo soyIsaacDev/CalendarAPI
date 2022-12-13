@@ -62,7 +62,22 @@ server.get("/Clientes", async (req, res) => {
   }
 });
 
-  module.exports =  server;
+server.get("/ubicacionCliente/:ClienteId", async (req, res) => { 
+  try {
+    const { ClienteId } = req.params;
+    
+     const ubicacionCliente = await UbicacionCliente.findAll({
+      where: {
+        ClienteId: ClienteId
+      } 
+    });
+    res.json(ubicacionCliente);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+module.exports =  server;
 
   
 module.exports = {
