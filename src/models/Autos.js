@@ -5,8 +5,12 @@ module.exports = s => {
         "Auto", 
     {
         Tamaño:{
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM('Grande', 'Chico'),
             allowNull: false 
+        },
+        Nombre:{
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
     timestamps: false,
