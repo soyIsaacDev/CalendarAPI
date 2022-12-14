@@ -6,8 +6,10 @@ const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, E
       solicitar Quicky -> Procesa un pedido y asigna el Cleaner mas cercano (aun no confirmado)
       nuevos Pedidos -> Confirma el pedido
     GET  
+      Cambiar Status Terminado
       Quickys Pedidos x Cliente
       Pedidos (All)
+      UltimoPedido
   */
 
 server.post("/solicitarQuicky", async (req, res) => { 
@@ -124,6 +126,24 @@ server.post("/nuevoPedido", async (req, res) => {
     }
 });
 
+server.get("/cambiarstatusTerminado/:PedidoId", async (req, res) => {
+  try {
+    let { PedidoId } = req.params;
+    const pedido = await Pedidos.findOne({
+      where: {
+        id: PedidoId
+      } 
+    });
+    console.log(pedido)
+    pedido.Terminado = "Si";
+    await pedido.save();
+    console.log(pedido)
+    res.json(pedido);
+  } catch (e) {
+    res.send(e)
+  }
+});
+
 server.get("/quickyspedidos/:ClienteId", async (req, res) => {
   try {
     let { ClienteId } = req.params;
@@ -138,6 +158,20 @@ server.get("/quickyspedidos/:ClienteId", async (req, res) => {
   }
 });
 
+server.get("/ultimoquickypedido/:ClienteId", async (req, res) => {
+  try {
+    let { ClienteId } = req.params;
+    const pedidos = await Pedidos.findAll({
+      where: {
+        ClienteId
+      } 
+    });
+    const ultimoPedido = pedidos[pedidos.length-1];
+    res.json(ultimoPedido? ultimoPedido : "El Cliente no tiene pedidos");
+  } catch (e) {
+    res.send(e)
+  }
+});
 server.get("/pedidos", async (req, res) => {
   try {
     const pedidos = await Pedidos.findAll({
