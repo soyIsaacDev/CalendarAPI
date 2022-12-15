@@ -2,25 +2,37 @@ const server = require("express").Router();
 
 const { Cliente, Auto } = require("../db");
 
-// GET
-//  nuevo -> Registrar un auto para el cliente
-//  All -> Todos los Autos
-//  porcliente: Autos registrados de un cliente segun el  nombre
-server.get("/nuevo/:ClienteId/:Tam/:Nombre", async (req, res) => { 
+/*  
+  POST
+    nuevo -> Registrar un auto para el cliente
+  GET
+    All -> Todos los Autos
+    porcliente: Autos registrados de un cliente segun el  nombre 
+*/
+server.post("/nuevo", async (req, res) => { 
   try {
-    const {  ClienteId, Tam, Nombre } = req.params;
+    const {  ClienteId, Tam, Nombre } = req.body;
 
-    const tamañoauto = await Auto.findOrCreate({
+    const auto = await Auto.findAll({ 
       where: {
-        ClienteId,
-        Nombre
-      },
-      defaults: {
-        Tamaño:Tam,
+        ClienteId
+      }   
+    });
 
+    if(auto.length===0){
+      if(auto.Nombre!==Nombre){
+        const crearauto = await Auto.create({
+          ClienteId,
+          Nombre,
+          Tamaño:Tam,
+        })
+        res.send(crearauto);
       }
-    })
-    res.send(tamañoauto);
+    }
+    
+    else {
+      res.send("El auto ya se encuentra creado")
+    }
   } catch (error) {
     res.send(error);
   }

@@ -14,7 +14,7 @@ const { AsignarPedidos} = require("./src/routes/AsignarPedidos")
 const { PedidosRoute } = require("./src/routes/pedidosroute")
 const { ServiciosOfrecidosRoute } = require("./src/routes/serviciosOfrecidosRoute")
 const { Administracion } = require("./src/routes/Administrador")
-const { AutoRoute } = require("./src/routes/autorRoute")
+const { AutoRoute } = require("./src/routes/autoRoute")
 
 app.use(cors());
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
