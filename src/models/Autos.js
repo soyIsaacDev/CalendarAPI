@@ -11,6 +11,9 @@ module.exports = s => {
         Nombre:{
             type: DataTypes.STRING,
             allowNull: false
+        },
+        Default:{
+            type: DataTypes.ENUM("1", "0")
         }
     }, {
     timestamps: false,

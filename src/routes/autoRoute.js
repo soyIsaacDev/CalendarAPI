@@ -8,6 +8,7 @@ const { Cliente, Auto } = require("../db");
   GET
     All -> Todos los Autos
     porcliente: Autos registrados de un cliente segun el  nombre 
+    cambiar auto default
 */
 server.post("/nuevo", async (req, res) => { 
   try {
@@ -20,10 +21,12 @@ server.post("/nuevo", async (req, res) => {
     });
 
     var Name = null;
+    var Default = null;
     const ultimoauto = auto.length-1;
     switch (ultimoauto) {
       case -1:
-        Name = "Primero"
+        Name = "Principal",
+        Default = "1"
         break;
       
       case 0:
@@ -55,6 +58,7 @@ server.post("/nuevo", async (req, res) => {
       ClienteId,
       Nombre:Name,
       Tamaño:Tam,
+      Default
     })
     res.send(crearauto);
     
@@ -96,7 +100,28 @@ server.get("/porcliente/:ClienteId", async (req, res) => {
         ClienteId
       }   
     });
-    res.json(auto===[]? auto : "El Cliente no tiene autos registados");
+    res.json(auto? auto : "El Cliente no tiene autos registados");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/cambiarAutoDefault/:ClienteId/:AutoId", async (req, res) => { 
+  try {
+    let { ClienteId, AutoId } = req.params;
+    const cambioauto = await Auto.findAll({ 
+      where: {
+        ClienteId
+      }   
+    });
+    for (let i = 0; i < cambioauto.length; i++) {
+      cambioauto[i].Default = null;
+      await cambioauto[i].save();
+    }
+    const auto = await Auto.findByPk(AutoId);
+    auto.Default = "1"
+    await auto.save();
+    res.json(auto? auto : "No existe ese auto");
   } catch (error) {
     res.send(error);
   }
