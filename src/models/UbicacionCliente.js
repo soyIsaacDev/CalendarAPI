@@ -30,6 +30,13 @@ module.exports = s => {
                 const sumaLoc = this.getDataValue('UbicacionLat') + this.getDataValue('UbicacionLong')
                 this.setDataValue('UbicacionCasaSum', value + sumaLoc );
             }
+        },
+        Nombre: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        Default:{
+            type: DataTypes.ENUM("1", "0")
         }
         
     }, {

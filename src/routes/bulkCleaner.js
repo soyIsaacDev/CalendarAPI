@@ -185,37 +185,49 @@ server.get("/crear", async (req, res) => {
               "ClienteId": 1,
               "UbicacionLat" : 29.0877,
               "UbicacionLong": -110.29,
-              "UbicacionCasaSum": 0
+              "UbicacionCasaSum": 0,
+              "Nombre":"Principal",
+              "Default": "1"
             },
             {
                 "ClienteId": 2,
                 "UbicacionLat" : 29.08,
                 "UbicacionLong": -110.99,
-                "UbicacionCasaSum": 0
+                "UbicacionCasaSum": 0,
+                "Nombre":"Principal",
+                "Default": "1"
             },
             {
                 "ClienteId": 3,
                 "UbicacionLat" : 30.01,
                 "UbicacionLong": -110.34,
-                "UbicacionCasaSum": 0
+                "UbicacionCasaSum": 0,
+                "Nombre":"Principal",
+                "Default": "1"
             },
             {
               "ClienteId": 4,
               "UbicacionLat" : 30.21,
               "UbicacionLong": -108.34,
-              "UbicacionCasaSum": 0
+              "UbicacionCasaSum": 0,
+              "Nombre":"Principal",
+              "Default": "1"
             },
             {
               "ClienteId": 5,
               "UbicacionLat" : 28.0877,
               "UbicacionLong": -109.15,
-              "UbicacionCasaSum": 0
+              "UbicacionCasaSum": 0,
+              "Nombre":"Principal",
+              "Default": "1"
             },
             {
               "ClienteId": 6,
               "UbicacionLat" : 31.01,
               "UbicacionLong": -100.34,
-              "UbicacionCasaSum": 0
+              "UbicacionCasaSum": 0,
+              "Nombre":"Principal",
+              "Default": "1"
             },
           ]
         ); 

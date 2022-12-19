@@ -2,6 +2,19 @@ const server = require("express").Router();
 
 const { Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db");
 
+/* 
+  POST
+    NuevoCleaner
+    NuevaUbicacion
+    cambiarStatusCleaner
+    actualizarTiempoxDesocupar
+  GET
+    cleaner -> All incluye modelos asociados
+    unCleaner -> Incluye modelos asociados
+    activos -> No incluye modelos asociados
+    AsignarCleaner  -> A medias -> se termino en Pedidos
+*/
+
 server.post("/nuevoCleaner", async (req, res) => { 
     try {
       const { Nombre, Apellido, Usuario, Email, Contraseña } = req.body;
