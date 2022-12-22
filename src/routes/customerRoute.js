@@ -1,11 +1,12 @@
 const server = require("express").Router();
 
-const { Cliente, UserData, UbicacionCliente } = require("../db");
+const { Cliente, UserData, UbicacionCliente, CiudadPais } = require("../db");
 
 /* 
   POST
     NuevoCliente -> Datos basicos login
     NuevaUbicacion
+    Editarubicacion -> Editar Nombre y Detalles
   GET
     cambiarUbicacionDefault
     Clientes -> UbicacionCliente
@@ -35,7 +36,7 @@ server.post("/nuevoCliente", async (req, res) => {
 
 server.post("/nuevaubicacion", async (req, res) => { 
   try {
-    const {  ClienteId, UbicacionLat, UbicacionLong, Nombre } = req.body;
+    const {  ClienteId, UbicacionLat, UbicacionLong, Nombre, Direccion, Detalles, CiudadId } = req.body;
     const cliente = await Cliente.findOne({
       where:{
         id:ClienteId,
@@ -82,6 +83,7 @@ server.post("/nuevaubicacion", async (req, res) => {
         break;
     }
     
+    
 
     const ubicacionClienteCreada = await UbicacionCliente.create(
       {
@@ -89,11 +91,29 @@ server.post("/nuevaubicacion", async (req, res) => {
           UbicacionLong,
           ClienteId:cliente.id, 
           Nombre: Name ,
-          Default    
+          Default,    
+          /* CiudadPaiId:1 */
       }
     );
+
+    
     
     res.json(ubicacionClienteCreada);
+  } catch (error) {
+    res.send(error);
+  }
+});
+server.post("/editarubicacion", async (req, res) => { 
+  try {
+    const {  UbicacionId, Nombre, Detalles } = req.body;
+    
+    const ubicacionCliente = await UbicacionCliente.findByPk(UbicacionId);
+
+    ubicacionCliente.Nombre = Nombre;
+    ubicacionCliente.Detalles = Detalles;
+    await ubicacionCliente.save();
+    
+    res.json(ubicacionCliente);
   } catch (error) {
     res.send(error);
   }
@@ -121,7 +141,12 @@ server.get("/ubicacionCliente/:ClienteId", async (req, res) => {
      const ubicacionCliente = await UbicacionCliente.findAll({
       where: {
         ClienteId: ClienteId
-      } 
+      },
+      include: [
+        {
+          model: CiudadPais
+        }
+      ],
     });
     res.json(ubicacionCliente);
   } catch (error) {

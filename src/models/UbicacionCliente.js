@@ -4,6 +4,19 @@ module.exports = s => {
     s.define(
         "UbicacionCliente", 
     {
+        Nombre: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        Direccion: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        Detalles: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        
         UbicacionLat:{
             type: DataTypes.FLOAT,
             allowNull: false,
@@ -31,10 +44,7 @@ module.exports = s => {
                 this.setDataValue('UbicacionCasaSum', value + sumaLoc );
             }
         },
-        Nombre: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
+        
         Default:{
             type: DataTypes.ENUM("1", "0")
         }

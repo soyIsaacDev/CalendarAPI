@@ -9,12 +9,13 @@ const { CleanerRoute  } = require('./src/routes/cleanerRoute');
 const { CalendarRoute } = require("./src/routes/calendarRoute");
 const { ClienteRoute } = require("./src/routes/customerRoute");
 const { EventosProgramados } = require("./src/routes/eventosProgramados");
-const { BulkRoute } = require("./src/routes/bulkCleaner");
+const { BulkRoute } = require("./src/routes/bulkCrear");
 const { AsignarPedidos} = require("./src/routes/AsignarPedidos")
 const { PedidosRoute } = require("./src/routes/pedidosroute")
 const { ServiciosOfrecidosRoute } = require("./src/routes/serviciosOfrecidosRoute")
 const { Administracion } = require("./src/routes/Administrador")
 const { AutoRoute } = require("./src/routes/autoRoute")
+const { CiudadesRoute } = require("./src/routes/CiudadesRoute");
 
 app.use(cors());
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
@@ -40,6 +41,7 @@ app.use("/Pedidos", PedidosRoute);
 //app.use("/administracion", Administracion);
 app.use("/admin/servicios", ServiciosOfrecidosRoute);
 app.use("/auto", AutoRoute);
+app.use("/Ciudades", CiudadesRoute);
 
 
 app.use((req, res, next) => {

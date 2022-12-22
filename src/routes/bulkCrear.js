@@ -1,6 +1,8 @@
 const server = require("express").Router();
 
-const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus, UbicacionCliente, ServiciosOfrecidos, Evaluacion } = require("../db");
+const { CalendarEventsReq, Cliente, Cleaner, UbicacionCleaner, CleanerStatus, UbicacionCliente, ServiciosOfrecidos, 
+  Evaluacion, CiudadPais
+} = require("../db");
 
 
 server.get("/crear", async (req, res) => { 
@@ -187,7 +189,8 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -110.29,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1"
+              "Default": "1", 
+              "CiudadPaiId":1
             },
             {
                 "ClienteId": 2,
@@ -195,7 +198,8 @@ server.get("/crear", async (req, res) => {
                 "UbicacionLong": -110.99,
                 "UbicacionCasaSum": 0,
                 "Nombre":"Principal",
-                "Default": "1"
+                "Default": "1",
+                "CiudadPaiId":1
             },
             {
                 "ClienteId": 3,
@@ -203,7 +207,8 @@ server.get("/crear", async (req, res) => {
                 "UbicacionLong": -110.34,
                 "UbicacionCasaSum": 0,
                 "Nombre":"Principal",
-                "Default": "1"
+                "Default": "1",
+                "CiudadPaiId":1
             },
             {
               "ClienteId": 4,
@@ -211,7 +216,8 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -108.34,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1"
+              "Default": "1",
+              "CiudadPaiId":1
             },
             {
               "ClienteId": 5,
@@ -219,7 +225,8 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -109.15,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1"
+              "Default": "1",
+              "CiudadPaiId":1
             },
             {
               "ClienteId": 6,
@@ -227,7 +234,8 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -100.34,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1"
+              "Default": "1",
+              "CiudadPaiId":1
             },
           ]
         ); 
@@ -292,6 +300,17 @@ server.get("/crear", async (req, res) => {
           ]
           ); 
         }, 100);
+
+        const ciudad = await CiudadPais.bulkCreate(
+          [
+            {
+              "Ciudad": "Hermosillo",
+              "Estado": "Sonora", 
+              "Pais": "Mexico"
+            }
+          ]
+        );
+        
 
     res.json(cleaner)
   } catch (e) {
