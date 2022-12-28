@@ -11,6 +11,7 @@ const { Cliente, UserData, UbicacionCliente, CiudadPais } = require("../db");
     cambiarUbicacionDefault
     Clientes -> UbicacionCliente
     ubicacionCliente x ClienteId
+    eliminarubicacion -> se elimina con el Id de la ubicacion;
 
 */
 
@@ -36,7 +37,7 @@ server.post("/nuevoCliente", async (req, res) => {
 
 server.post("/nuevaubicacion", async (req, res) => { 
   try {
-    const {  ClienteId, UbicacionLat, UbicacionLong, Nombre, Direccion, Detalles, CiudadId } = req.body;
+    const {  ClienteId, UbicacionLat, UbicacionLong, Nombre, Direccion, Detalles, Ciudad } = req.body;
     const cliente = await Cliente.findOne({
       where:{
         id:ClienteId,
@@ -90,7 +91,8 @@ server.post("/nuevaubicacion", async (req, res) => {
           UbicacionLat,
           UbicacionLong,
           ClienteId:cliente.id, 
-          Nombre: Name ,
+          Nombre: Direccion,
+          Direccion,
           Default,    
           /* CiudadPaiId:1 */
       }
@@ -106,7 +108,7 @@ server.post("/nuevaubicacion", async (req, res) => {
 server.post("/editarubicacion", async (req, res) => { 
   try {
     const {  UbicacionId, Nombre, Detalles } = req.body;
-    
+    console.log("Editar Ubicacion " + UbicacionId)
     const ubicacionCliente = await UbicacionCliente.findByPk(UbicacionId);
 
     ubicacionCliente.Nombre = Nombre;
@@ -170,6 +172,19 @@ server.get("/cambiarUbicacionDefault/:ClienteId/:UbicacionId", async (req, res) 
     ubicacion.Default = "1"
     await ubicacion.save();
     res.json(ubicacion? ubicacion : "No existe esa ubicacion");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/eliminarubicacion/:UbicacionId", async (req, res) => { 
+  try {
+    const {  UbicacionId } = req.params;
+    const ubicacionCliente = await UbicacionCliente.findByPk(UbicacionId);
+
+    await ubicacionCliente.destroy();
+    
+    res.json("Se elimino la ubicacion ID " + UbicacionId);
   } catch (error) {
     res.send(error);
   }
