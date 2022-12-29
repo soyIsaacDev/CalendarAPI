@@ -107,12 +107,16 @@ server.post("/nuevaubicacion", async (req, res) => {
 });
 server.post("/editarubicacion", async (req, res) => { 
   try {
-    const {  UbicacionId, Nombre, Detalles } = req.body;
+    const {  UbicacionId, Nombre, Detalles, Direccion} = req.body;
     console.log("Editar Ubicacion " + UbicacionId)
     const ubicacionCliente = await UbicacionCliente.findByPk(UbicacionId);
 
+    // Editamos
     ubicacionCliente.Nombre = Nombre;
     ubicacionCliente.Detalles = Detalles;
+    ubicacionCliente.Direccion = Direccion;
+
+    // Guardamos
     await ubicacionCliente.save();
     
     res.json(ubicacionCliente);
