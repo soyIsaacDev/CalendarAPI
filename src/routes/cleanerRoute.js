@@ -12,7 +12,8 @@ const { Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db"
     cleaner -> All incluye modelos asociados
     unCleaner -> Incluye modelos asociados
     activos -> No incluye modelos asociados
-    AsignarCleaner  -> A medias -> se termino en Pedidos
+    AsignarCleaner  -> A medias -> se termino la funcionalidad en Pedidos
+    EvaluarCleaner
 */
 
 server.post("/nuevoCleaner", async (req, res) => { 
@@ -104,7 +105,9 @@ server.get("/cleaner", async (req, res) => {
           model: Evaluacion
         }
       ],
-      order:[['UbicacionCasaSum', 'ASC']]    
+      order:[
+        [UbicacionCleaner,'UbicacionCasaSum', 'ASC']
+      ]    
     });
     res.json(cleaner);
   } catch (error) {     
@@ -193,9 +196,26 @@ server.get("/asignarcleaner", async (req, res) => {
   }
 });
 
-  module.exports =  server;
+server.get("/evaluarCleaner/:CleanerId/:Calificacion", async (req, res) => {
+  try {
+    let { CleanerId, Calificacion } = req.params;
+    
+    const evaluacionCleaner = await Evaluacion.create({
+      Calificacion,
+      CleanerId
+    })
 
+    res.json(evaluacionCleaner);
+  } catch (error) {     
+    res.send(error);
+  }
+});
+
+
+
+module.exports =  server;
   
 module.exports = {
   CleanerRoute: server
 }
+

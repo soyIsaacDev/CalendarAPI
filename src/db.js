@@ -63,7 +63,7 @@ let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas,
 // Relaciones DB
 
 Evaluacion.belongsTo(Cleaner);
-Cleaner.hasOne(Evaluacion);
+Cleaner.hasMany(Evaluacion);
 CalendarEventsReq.belongsTo(Cliente)
 Cliente.hasMany(CalendarEventsReq);
 CalendarEventsAsig.belongsTo(Cleaner);
