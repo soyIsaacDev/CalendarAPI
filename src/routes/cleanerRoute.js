@@ -199,11 +199,32 @@ server.get("/asignarcleaner", async (req, res) => {
 server.get("/evaluarCleaner/:CleanerId/:Calificacion", async (req, res) => {
   try {
     let { CleanerId, Calificacion } = req.params;
-    
+    if(Calificacion > 5){
+      Calificacion = 5;
+    }
     const evaluacionCleaner = await Evaluacion.create({
       Calificacion,
       CleanerId
     })
+
+    const cleaner = await Cleaner.findOne({ 
+      where: { id: CleanerId },
+      include: [
+        {
+          model: Evaluacion
+        }
+      ]     
+    });
+    
+    let suma = 0;
+    var promedio = 0;
+    for (let i = 0; i < cleaner.Evaluacions.length; i++) {
+      suma = cleaner.Evaluacions[i].Calificacion + suma;
+      promedio = suma / cleaner.Evaluacions.length;
+     
+    }
+    cleaner.PromEvaluacion = promedio;
+    cleaner.save();
 
     res.json(evaluacionCleaner);
   } catch (error) {     

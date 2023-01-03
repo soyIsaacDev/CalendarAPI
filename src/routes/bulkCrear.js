@@ -14,42 +14,48 @@ server.get("/crear", async (req, res) => {
           "Apellido": "A",
           "Usuario": "A",
           "Email": "ssdkjkl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion": 4
         },
         {
           "Nombre": "B",
           "Apellido": "B",
           "Usuario": "B",
           "Email": "kdfsfgdsakjkl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion": 5
         },
         {
           "Nombre": "C",
           "Apellido": "C",
           "Usuario": "C",
           "Email": "klkjdsfdsaekl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion":3
         },
         {
           "Nombre": "D",
           "Apellido": "D",
           "Usuario": "D",
           "Email": "JHkl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion":3
         },
         {
           "Nombre": "E",
           "Apellido": "E",
           "Usuario": "E",
           "Email": "Ykl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion":5
         },
         {
           "Nombre": "F",
           "Apellido": "F",
           "Usuario": "F",
           "Email": "Tekl",
-          "Contraseña": "Hermosillo"
+          "Contraseña": "Hermosillo", 
+          "PromEvaluacion":4
         }
       ]
     );
@@ -279,15 +285,15 @@ server.get("/crear", async (req, res) => {
             },
             {
               "CleanerId": 2,
-              "Calificacion" : 4.5
+              "Calificacion" : 5
             },
             {
               "CleanerId": 3,
-              "Calificacion" : 3.5
+              "Calificacion" : 3
             },
             {
               "CleanerId": 4,
-              "Calificacion" : 2
+              "Calificacion" : 3
             },
             {
               "CleanerId": 5,

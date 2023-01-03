@@ -24,6 +24,10 @@ module.exports = s => {
         Contraseña:{
             type: DataTypes.STRING,
             allowNull: false 
+        }, 
+        PromEvaluacion:{
+            type: DataTypes.FLOAT,
+            allowNull:true
         }
     }, {
     timestamps: false,
