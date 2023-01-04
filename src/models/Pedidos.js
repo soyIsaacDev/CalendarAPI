@@ -76,8 +76,8 @@ module.exports = s => {
                 this.setDataValue('UbicacionSum', value + sumaUbic );
             }
         },
-        Terminado:{
-            type:DataTypes.STRING,
+        Proceso:{
+            type:DataTypes.ENUM('Asignado','En_Camino','En_Proceso','Terminado','Cancelado'),
             allowNull:false,
         }
     }, {

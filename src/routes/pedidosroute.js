@@ -6,10 +6,10 @@ const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, E
       solicitar Quicky -> Procesa un pedido y asigna el Cleaner mas cercano (aun no confirmado)
       nuevos Pedidos -> Confirma el pedido
     GET  
-      Cambiar Status Terminado
+      Cambiar Status Proceso
       Quickys Pedidos x Cliente
-      Pedidos (All)
       UltimoPedido
+      Pedidos (All)
   */
 
 server.post("/solicitarQuicky", async (req, res) => { 
@@ -90,9 +90,10 @@ server.post("/solicitarQuicky", async (req, res) => {
   }
 });
 
+//Confirma el pedido
 server.post("/nuevoPedido", async (req, res) => { 
     try {
-      const { ClienteId, Tipo, Hora, CleanerId, Terminado } = req.body;
+      const { ClienteId, Tipo, Hora, CleanerId, Proceso } = req.body;
       console.log("PEDIDOOOOO")
       /* const cliente = await Cliente.findOne({
           where: {
@@ -118,7 +119,7 @@ server.post("/nuevoPedido", async (req, res) => {
           ubicacionLat: ultimaUbicacionClienteLat,
           ubicacionLong: ultimaUbicacionClienteLong,
           CleanerId, 
-          Terminado
+          Proceso
       });
       res.json(pedido);
     } catch (error) {
@@ -126,16 +127,16 @@ server.post("/nuevoPedido", async (req, res) => {
     }
 });
 
-server.get("/cambiarstatusTerminado/:PedidoId", async (req, res) => {
+server.get("/cambiarstatusproceso/:PedidoId/:Status", async (req, res) => {
   try {
-    let { PedidoId } = req.params;
+    let { PedidoId, Status } = req.params;
     const pedido = await Pedidos.findOne({
       where: {
         id: PedidoId
       } 
     });
     console.log(pedido)
-    pedido.Terminado = "Si";
+    pedido.Proceso = Status;
     await pedido.save();
     console.log(pedido)
     res.json(pedido);
@@ -150,7 +151,8 @@ server.get("/quickyspedidos/:ClienteId", async (req, res) => {
     const pedidos = await Pedidos.findAll({
       where: {
         ClienteId
-      } 
+      },
+      order: [['id', 'DESC']]
     });
     res.json(pedidos);
   } catch (e) {
