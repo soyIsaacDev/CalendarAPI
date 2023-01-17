@@ -82,7 +82,7 @@ server.post("/solicitarQuicky", async (req, res) => {
       }
     }
 
-    const cleaner = cleanerDisponible[4]
+    const cleaner = cleanerDisponible[CleanerId];
     
     res.json(cleaner? cleaner : "No hay cleaner disponibles");
   } catch (error) {

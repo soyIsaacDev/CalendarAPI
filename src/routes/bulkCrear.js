@@ -195,7 +195,7 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -110.29,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1", 
+              "Default": 1, 
               "CiudadPaiId":1
             },
             {
@@ -204,7 +204,7 @@ server.get("/crear", async (req, res) => {
                 "UbicacionLong": -110.99,
                 "UbicacionCasaSum": 0,
                 "Nombre":"Principal",
-                "Default": "1",
+                "Default": 1,
                 "CiudadPaiId":1
             },
             {
@@ -213,7 +213,7 @@ server.get("/crear", async (req, res) => {
                 "UbicacionLong": -110.34,
                 "UbicacionCasaSum": 0,
                 "Nombre":"Principal",
-                "Default": "1",
+                "Default":1,
                 "CiudadPaiId":1
             },
             {
@@ -222,7 +222,7 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -108.34,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1",
+              "Default": 1,
               "CiudadPaiId":1
             },
             {
@@ -231,7 +231,7 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -109.15,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1",
+              "Default": 1,
               "CiudadPaiId":1
             },
             {
@@ -240,7 +240,7 @@ server.get("/crear", async (req, res) => {
               "UbicacionLong": -100.34,
               "UbicacionCasaSum": 0,
               "Nombre":"Principal",
-              "Default": "1",
+              "Default": 1,
               "CiudadPaiId":1
             },
           ]

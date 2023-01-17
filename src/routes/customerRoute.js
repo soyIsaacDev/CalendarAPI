@@ -12,6 +12,7 @@ const { Cliente, UserData, UbicacionCliente, CiudadPais } = require("../db");
     Clientes -> UbicacionCliente
     ubicacionCliente x ClienteId
     eliminarubicacion -> se elimina con el Id de la ubicacion;
+    ubicacionClientebyDefault/:ClienteId  --> Ordenado por Default Ascendente y consulta por ClienteId
 
 */
 
@@ -50,41 +51,10 @@ server.post("/nuevaubicacion", async (req, res) => {
       }
     });
     var Name = null;
-    var Default = null;
-    const ultimoubicacion = ubicacionCliente.length-1;
-    
-    switch (ultimoubicacion) {
-      case -1:
-        Name = "Principal",
-        Default = "1"
-        break;
-      
-      case 0:
-        Name = "Segundo"
-        break;
-      case 1:
-        Name = "Tercero"
-        break;
-      case 2:
-        Name = "Cuarto"
-        break;
-      case 3:
-        Name = "Quinto"
-        break;
-      case 4:
-        Name = "Sexto"
-        break;
-      case 5:
-        Name = "Septimo"
-        break;
-      case 6:
-        Name = "Octavo"
-        break;  
-      default:
-        break;
-    }
-    
-    
+
+    const ultimaubicacion = await ubicacionCliente.length-1;
+    const ultimoDefault = await ubicacionCliente[ultimaubicacion].Default;
+    const Default = await ultimoDefault + 1;
 
     const ubicacionClienteCreada = await UbicacionCliente.create(
       {
@@ -93,14 +63,12 @@ server.post("/nuevaubicacion", async (req, res) => {
           ClienteId:cliente.id, 
           Nombre: Direccion,
           Direccion,
-          Default,    
+          Default: Default,    
           /* CiudadPaiId:1 */
       }
     );
 
-    
-    
-    res.json(ubicacionClienteCreada);
+    res.json(ubicacionClienteCreada? ubicacionClienteCreada : "No se pudo crear la ubicacion");
   } catch (error) {
     res.send(error);
   }
@@ -169,13 +137,24 @@ server.get("/cambiarUbicacionDefault/:ClienteId/:UbicacionId", async (req, res) 
       }   
     });
     for (let i = 0; i < cambioUbicacion.length; i++) {
-      cambioUbicacion[i].Default = null;
+      let count = i+1;
+      let countString = count.toString();
+      cambioUbicacion[i].Default = i+1;
+      console.log("CambioUbicacionDefault "+cambioUbicacion[i].Default)
       await cambioUbicacion[i].save();
     }
     const ubicacion = await UbicacionCliente.findByPk(UbicacionId);
-    ubicacion.Default = "1"
-    await ubicacion.save();
-    res.json(ubicacion? ubicacion : "No existe esa ubicacion");
+    ubicacion.Default = 0;
+    await ubicacion.save(); 
+    
+    const ubicacionOrdenada = await UbicacionCliente.findAll({
+      where: {
+        ClienteId
+      },
+      order:[["Default", "DESC"]]
+    });
+    console.log(cambioUbicacion); 
+    res.json(ubicacionOrdenada? ubicacionOrdenada : "No existe esa ubicacion");
   } catch (error) {
     res.send(error);
   }
@@ -189,6 +168,27 @@ server.get("/eliminarubicacion/:UbicacionId", async (req, res) => {
     await ubicacionCliente.destroy();
     
     res.json("Se elimino la ubicacion ID " + UbicacionId);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/ubicacionClientebyDefault/:ClienteId", async (req, res) => { 
+  try {
+    const { ClienteId } = req.params;
+    
+     const ubicacionCliente = await UbicacionCliente.findAll({
+      where: {
+        ClienteId: ClienteId
+      },
+      include: [
+        {
+          model: CiudadPais
+        }
+      ],
+      order:[["Default", "ASC"]]
+    });
+    res.json(ubicacionCliente);
   } catch (error) {
     res.send(error);
   }

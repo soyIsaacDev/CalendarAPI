@@ -46,7 +46,8 @@ module.exports = s => {
         },
         
         Default:{
-            type: DataTypes.ENUM("1", "0")
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
         
     }, {
