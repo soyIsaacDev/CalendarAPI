@@ -36,7 +36,10 @@ const modelPedido = require("./models/Pedidos");
 const modelAutos = require("./models/Autos");
 const modelCleanerStatus = require("./models/CleanerStatus")
 const modelServiciosOfrecidos = require("./models/ServiciosOfrecidos");
-const modelCiudadPais = require("./models/CiudadPais")
+const modelCiudadPais = require("./models/CiudadPais");
+const modelSession = require("./models/Sessions");
+const modelUser = require("./models/User");
+
 
 //pasamos instancia de sequelize a los modelos
 modelCleaner(sequelize);
@@ -53,10 +56,12 @@ modelAutos(sequelize);
 modelCleanerStatus(sequelize);
 modelServiciosOfrecidos(sequelize);
 modelCiudadPais(sequelize);
+modelSession(sequelize);
+modelUser(sequelize);
 
 let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, 
   UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus, ServiciosOfrecidos,
-  CiudadPais,
+  CiudadPais, Sessions, User
 
 } = sequelize.models;
 

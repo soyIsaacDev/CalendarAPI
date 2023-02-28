@@ -113,3 +113,13 @@ const ubicacionCleaner = await Cleaner.findAll({
       
       });
       res.json(ubicacionCleaner);
+
+Authenticacion con Passport Google Strategy
+
+  npm install passport
+  npm install passport-google-oauth20
+  npm i express-session
+  npm i connect-pg-simple
+
+npm i passport, passport-google-oauth20, express-session, connect-pg-simple
+  

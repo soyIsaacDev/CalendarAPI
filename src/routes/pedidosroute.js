@@ -135,10 +135,31 @@ server.get("/cambiarstatusproceso/:PedidoId/:Status", async (req, res) => {
         id: PedidoId
       } 
     });
-    console.log(pedido)
-    pedido.Proceso = Status;
-    await pedido.save();
-    console.log(pedido)
+
+    if(Status == "Cancelado"){
+      const horaPedido = pedido.start;
+      const horaActual = new Date();
+      // si la hora de cancelacion es menor a 5 minutos no hay cobro
+      // si es mayor hay una multa de 50% del valor del pedido
+      const pasaron5minutos = horaActual-horaPedido;
+      
+      if(pasaron5minutos < 60000){
+        pedido.Proceso = "CanceladoSinMulta";
+        await pedido.save();
+        console.log("menos de 5 minutos");
+      } 
+      else{
+        console.log("CanceladoConMulta");
+        pedido.Proceso = "CanceladoConMulta";
+        await pedido.save();
+      }
+    }
+    else{
+      pedido.Proceso = Status;
+      await pedido.save();
+    }
+
+    
     res.json(pedido);
   } catch (e) {
     res.send(e)

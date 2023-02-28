@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const { auth } = require('./src/routes/auth');
 const { CleanerRoute  } = require('./src/routes/cleanerRoute');
 const { CalendarRoute } = require("./src/routes/calendarRoute");
 const { ClienteRoute } = require("./src/routes/customerRoute");
@@ -30,8 +31,29 @@ app.use("/assets", express.static(__dirname + "/public"));
 app.get("/", (req,res) => {
     res.send("Hola, el servidor esta activo");
 });
+app.use("/", auth);
 
-app.use("/cleaner", CleanerRoute);
+// Middleware que verifica si esta autenticado
+function isAuthenticated(req, res, next) {
+    if(req.isAuthenticated()) {
+        next(); // pasa a la ruta
+    } else {
+        console.log("Usuario no autenticado");
+        res.redirect('/login');
+    }
+}
+
+app.get("/authenticado", isAuthenticated, (req,res) => {
+    res.send("Hola, el usuario ha sido authenticado");
+});
+app.get("/deslogeado", (req,res) => {
+    res.send("El Usuario ha sido deslogeado");
+});
+app.get("/login", (req,res) => {
+    res.send("Loggear con google");
+});
+
+app.use("/cleaner", isAuthenticated, CleanerRoute);
 app.use("/calendario", CalendarRoute );
 app.use("/cliente", ClienteRoute);
 app.use("/eventosprogramados", EventosProgramados);
@@ -48,7 +70,7 @@ app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")
   })
 
-//funcion para cachar errores
+//funcion para cachar errores (middleware)
 app.use(function (err, req, res, next) {
     console.error(err);
     res.status(err.status || 500).send(err.message);
