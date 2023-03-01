@@ -4,6 +4,15 @@ module.exports = s => {
     s.define(
         "Cliente", 
     {
+        googleId:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true 
+        },
+        Usuario:{
+            type: DataTypes.STRING,
+            allowNull: false,
+        }, 
         Nombre:{
             type: DataTypes.STRING,
             allowNull: false 
@@ -12,18 +21,8 @@ module.exports = s => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        Usuario:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique:true 
-        },
         Email:{
-            type: DataTypes.STRING,
-            allowNull: false 
-        },
-        Contraseña:{
-            type: DataTypes.STRING,
-            allowNull: false 
+            type: DataTypes.STRING
         }
     }, {
     timestamps: false,

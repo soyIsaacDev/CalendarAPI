@@ -114,7 +114,7 @@ const ubicacionCleaner = await Cleaner.findAll({
       });
       res.json(ubicacionCleaner);
 
-Authenticacion con Passport Google Strategy
+**Authenticacion con Passport Google Strategy**
 
   npm install passport
   npm install passport-google-oauth20

@@ -1,7 +1,7 @@
 const server = require("express").Router();
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { User } = require("../db");
+const { User, Cliente } = require("../db");
 const { Pool } = require('pg');
 var session = require('express-session');
 const PgSession = require('connect-pg-simple')(session);
@@ -29,16 +29,18 @@ passport.use(new GoogleStrategy({
     callbackURL: '/oauth2/redirect/google'
   },
   function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ 
+   Cliente.findOrCreate({ 
       where: {
         googleId: profile.id
       },
       defaults: {
-        username: profile.displayName,
-        name: profile.name.givenName
+        Usuario: profile.displayName,
+        Nombre: profile.name.givenName,
+        Apellido: profile.name.familyName,
       }
     })
     .then((user) => cb(null, user))
+    
     .catch((err) => cb(err, null))
     
   }
@@ -72,7 +74,7 @@ passport.serializeUser(function(user, cb) {
 // So your whole object is retrieved with help of that key.
 // https://stackoverflow.com/questions/27637609/understanding-passport-serialize-deserialize
 passport.deserializeUser((id, done) => {
-  User.findOne(id)
+  Cliente.findOne(id)
     .then(user => done(null, user))
     .catch(err => done(err));
 });
