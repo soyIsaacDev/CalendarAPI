@@ -141,7 +141,7 @@ server.get("/crear", async (req, res) => {
         ]
       );
 
-      const clientes = await Cliente.bulkCreate(
+      /* const clientes = await Cliente.bulkCreate(
         [
           {
             "Nombre": "1",
@@ -184,7 +184,7 @@ server.get("/crear", async (req, res) => {
             "Contraseña": "Hermosillo"
           }
         ]
-      );
+      ); */
 
       setTimeout(async () => {
         const clienteLocation = await UbicacionCliente.bulkCreate(
@@ -198,7 +198,7 @@ server.get("/crear", async (req, res) => {
               "Default": 1, 
               "CiudadPaiId":1
             },
-            {
+            /* {
                 "ClienteId": 2,
                 "UbicacionLat" : 29.08,
                 "UbicacionLong": -110.99,
@@ -242,7 +242,7 @@ server.get("/crear", async (req, res) => {
               "Nombre":"Principal",
               "Default": 1,
               "CiudadPaiId":1
-            },
+            }, */
           ]
         ); 
       });

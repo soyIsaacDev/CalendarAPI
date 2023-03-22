@@ -93,6 +93,15 @@ server.post("/editarubicacion", async (req, res) => {
   }
 });
 
+server.get("/Usuario", async(req,res)=>{
+  try {
+   const usuario = req.user.id; 
+   console.log("USUARIO" + usuario)
+   res.json(usuario)
+  } catch (e) {
+    res.send(e)
+  }
+})
 server.get("/Clientes", async (req, res) => {
   try {
     const cliente = await Cliente.findAll({
@@ -173,7 +182,7 @@ server.get("/eliminarubicacion/:UbicacionId", async (req, res) => {
   }
 });
 
-server.get("/ubicacionClientebyDefault/:ClienteId", async (req, res) => { 
+server.get("/ubicacionClientebyDefault/:ClienteId", async (req, res) => {
   try {
     const { ClienteId } = req.params;
     
@@ -188,6 +197,7 @@ server.get("/ubicacionClientebyDefault/:ClienteId", async (req, res) => {
       ],
       order:[["Default", "ASC"]]
     });
+    
     res.json(ubicacionCliente);
   } catch (error) {
     res.send(error);

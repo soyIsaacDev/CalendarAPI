@@ -5,8 +5,8 @@ const { User, Cliente } = require("../db");
 const { Pool } = require('pg');
 var session = require('express-session');
 const PgSession = require('connect-pg-simple')(session);
-var passport = require('passport');
 const pg = require('pg');
+const jwt = require('jsonwebtoken');
 
 const pgPool = new pg.Pool({
     // Insert pool options here
@@ -23,26 +23,28 @@ idleTimeoutMillis: 60000,
 connectionTimeoutMillis: 6000,
 })
 
+
+// How Passport works 
+// https://medium.com/@prashantramnyc/node-js-with-passport-authentication-simplified-76ca65ee91e5
 passport.use(new GoogleStrategy({
     clientID: process.env['GOOGLE_CLIENT_ID'],
     clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
     callbackURL: '/oauth2/redirect/google'
   },
   function(accessToken, refreshToken, profile, cb) {
-   Cliente.findOrCreate({ 
-      where: {
-        googleId: profile.id
-      },
-      defaults: {
-        Usuario: profile.displayName,
-        Nombre: profile.name.givenName,
-        Apellido: profile.name.familyName,
-      }
-    })
-    .then((user) => cb(null, user))
     
-    .catch((err) => cb(err, null))
-    
+    Cliente.findOrCreate({ 
+        where: {
+          googleId: profile.id
+        },
+        defaults: {
+          Usuario: profile.displayName,
+          Nombre: profile.name.givenName,
+          Apellido: profile.name.familyName,
+        }
+      })
+      .then((user) => cb(null, user))
+      .catch((err) => cb(err, null))
   }
 ));
 
@@ -81,11 +83,19 @@ passport.deserializeUser((id, done) => {
 
 server.get('/auth/google',  passport.authenticate('google', { scope: ['profile'] }));
 
+
 server.get('/oauth2/redirect/google', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
+
+    //Generating a jsonwebtoken
+    //jwt.sign(payload, secretOrPrivateKey, [options, callback])
+    const token = jwt.sign({ data: req.user },process.env['SECRET_JWT_TOKEN'], { expiresIn: '1h' });
+    
+    console.log(token);
+    console.log("Usuario Google Auth" + JSON.stringify(req.user))
     // Successful authentication, redirect home.
-    res.redirect('/authenticado');
+    res.redirect('http://localhost:3000/tamauto?token='+token);
   });
 
 server.get('/logout', function(req, res, next) {

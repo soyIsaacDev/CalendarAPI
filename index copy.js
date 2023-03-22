@@ -23,7 +23,6 @@ const { AutoRoute } = require("./src/routes/autoRoute")
 const { CiudadesRoute } = require("./src/routes/CiudadesRoute");
 
 app.use(cors());
-
 app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
 
 app.use(express.static('public')) // --> habilitamos archivos estaticos con el middleware express.static
@@ -50,6 +49,8 @@ app.use("/", auth);
 
 // Middleware que verifica si esta autenticado
 function isAuthenticated(req, res, next) {
+    
+
     const ClienteVerificadoTokenFunction = async () => {
         
         try {
@@ -69,30 +70,32 @@ function isAuthenticated(req, res, next) {
             return clienteVerificadoDB;
         } catch (error) {
             console.log("ERROR "+error);
-            /* return error; */
             if(error.name===  'TokenExpiredError'){
                 console.log("FAVOR DE RENOVAR EL TOKEN");
-                const respuesta = {"Mensaje":"Renovar Token"};
-                return respuesta;
+                /* res.redirect('http://localhost:3000/login'); */
             }
-            else{
-                return error;
-            }
+            return error;
         }
     }
-    
+    //ClienteVerificadoToken();
     (async() => {
         const ClienteVerificadoToken = await ClienteVerificadoTokenFunction()
-        
         console.log("Respuesta CLiente Verificado"+JSON.stringify(ClienteVerificadoToken))
-        if(req.isAuthenticated() || ClienteVerificadoToken.googleId) {
-            console.log("Todo bien")
+        if(req.isAuthenticated() || ClienteVerificadoToken) {
             next(); // pasa a la ruta
         } else {
             console.log("Usuario no autenticado");
-            res.json(ClienteVerificadoToken);                        
+            res.header('Access-Control-Allow-Origin',"http://localhost:5000");
+            res.header('Access-Control-Allow-Credentials', true);
+            res.redirect('http://localhost:3000/login')
         }
     })();
+    /* var Usuario = false;
+    ClienteVerificadoToken()
+        .then(resp => console.log("Respuesta CLiente Verificado"+resp))
+        .then(resp => Usuario)
+        .then(Usuario =>console.log("Usuario DB " + Usuario)) */
+    /* console.log("ClienteVerificadoToken "+ ClienteVerificadoToken().then(console.log)); */
 }
 
 app.get("/authenticado", isAuthenticated, (req,res) => {
