@@ -95,7 +95,7 @@ server.get('/oauth2/redirect/google',
     console.log(token);
     console.log("Usuario Google Auth" + JSON.stringify(req.user))
     // Successful authentication, redirect home.
-    res.redirect('http://localhost:3000/tamauto?token='+token);
+    res.redirect('http://localhost:3000/?token='+token);
   });
 
 server.get('/logout', function(req, res, next) {

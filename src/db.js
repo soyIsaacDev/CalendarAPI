@@ -39,6 +39,7 @@ const modelServiciosOfrecidos = require("./models/ServiciosOfrecidos");
 const modelCiudadPais = require("./models/CiudadPais");
 const modelSession = require("./models/Sessions");
 const modelUser = require("./models/User");
+const modelImgCliente = require("./models/ImgCliente");
 
 
 //pasamos instancia de sequelize a los modelos
@@ -58,10 +59,11 @@ modelServiciosOfrecidos(sequelize);
 modelCiudadPais(sequelize);
 modelSession(sequelize);
 modelUser(sequelize);
+modelImgCliente(sequelize);
 
 let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, 
   UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus, ServiciosOfrecidos,
-  CiudadPais, Sessions, User
+  CiudadPais, Sessions, User, ImgCliente,
 
 } = sequelize.models;
 
@@ -91,6 +93,9 @@ Auto.belongsTo(Cliente);
 
 CiudadPais.hasMany(UbicacionCliente);
 UbicacionCliente.belongsTo(CiudadPais);
+
+ImgCliente.belongsTo(Cliente);
+Cliente.hasOne(ImgCliente);
 
 
 

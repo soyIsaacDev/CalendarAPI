@@ -21,11 +21,14 @@ const { ServiciosOfrecidosRoute } = require("./src/routes/serviciosOfrecidosRout
 const { Administracion } = require("./src/routes/Administrador")
 const { AutoRoute } = require("./src/routes/autoRoute")
 const { CiudadesRoute } = require("./src/routes/CiudadesRoute");
+const { ImagenRoute } = require("./src/routes/imgPerfil");
+
 
 app.use(cors());
 
-app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
-
+//app.use(express.json()); //  -->  habilitamos objetos json con el metodo express.json   
+app.use(express.json({limit: '25mb'}));
+app.use(express.urlencoded({limit: '25mb', extended: true}));
 app.use(express.static('public')) // --> habilitamos archivos estaticos con el middleware express.static
     //para crear un prefijo en la ruta 
 app.use("/assets", express.static(__dirname + "/public"));
@@ -69,9 +72,14 @@ function isAuthenticated(req, res, next) {
             return clienteVerificadoDB;
         } catch (error) {
             console.log("ERROR "+error);
-            /* return error; */
+            
             if(error.name===  'TokenExpiredError'){
                 console.log("FAVOR DE RENOVAR EL TOKEN");
+                const respuesta = {"Mensaje":"Renovar Token"};
+                return respuesta;
+            }
+            if(error.name === "JsonWebTokenError"){
+                console.log("TOKEN MAL FORMADO");
                 const respuesta = {"Mensaje":"Renovar Token"};
                 return respuesta;
             }
@@ -107,16 +115,16 @@ app.get("/login", (req,res) => {
 
 app.use("/cleaner", isAuthenticated, CleanerRoute);
 app.use("/calendario",isAuthenticated, CalendarRoute );
-app.use("/cliente", isAuthenticated,  ClienteRoute);
+app.use("/cliente", isAuthenticated, ClienteRoute);
 app.use("/eventosprogramados", EventosProgramados);
 app.use("/bulk", isAuthenticated, BulkRoute);
-app.use("/AsignarPedidos", AsignarPedidos);
-app.use("/Pedidos", PedidosRoute);
+app.use("/AsignarPedidos", isAuthenticated, AsignarPedidos);
+app.use("/Pedidos", isAuthenticated, PedidosRoute);
 //app.use("/administracion", Administracion);
-app.use("/admin/servicios", ServiciosOfrecidosRoute);
-app.use("/auto", AutoRoute);
-app.use("/Ciudades", CiudadesRoute);
-
+app.use("/admin/servicios", isAuthenticated, ServiciosOfrecidosRoute);
+app.use("/auto", isAuthenticated, AutoRoute);
+app.use("/Ciudades", isAuthenticated, CiudadesRoute);
+app.use("/imagenes", ImagenRoute);
 
 app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")

@@ -93,13 +93,8 @@ server.post("/solicitarQuicky", async (req, res) => {
 //Confirma el pedido
 server.post("/nuevoPedido", async (req, res) => { 
     try {
-      const { ClienteId, Tipo, Hora, CleanerId, Proceso } = req.body;
-      console.log("PEDIDOOOOO")
-      /* const cliente = await Cliente.findOne({
-          where: {
-            id: ClienteId
-          } 
-      }); */
+      const { ClienteId, Tipo, Hora, Auto, CleanerId, Proceso } = req.body;
+      console.log("PEDIDOOOOO " + Tipo + Auto)
       const ubicacionCliente = await UbicacionCliente.findAll({
         where: {
           ClienteId: ClienteId
@@ -114,13 +109,14 @@ server.post("/nuevoPedido", async (req, res) => {
           ClienteId,
           kind: Tipo,
           colorId: 1,
-          auto: "Definir Auto",
+          auto: Auto,
           start: Hora,
           ubicacionLat: ultimaUbicacionClienteLat,
           ubicacionLong: ultimaUbicacionClienteLong,
           CleanerId, 
           Proceso
       });
+      console.log("Pedido " + JSON.stringify(pedido))
       res.json(pedido);
     } catch (error) {
       res.send(error);

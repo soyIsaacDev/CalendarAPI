@@ -1,9 +1,12 @@
 const server = require("express").Router();
+const express = require("express");
 
-const { Cliente, UserData, UbicacionCliente, CiudadPais } = require("../db");
-
+const { Cliente, UserData, UbicacionCliente, CiudadPais, ImgCliente } = require("../db");
+const uploadImgPerfilCliente = require("../controllers/uploadPerfilCliente");
+const upload = require("../middleware/upload");
 /* 
   POST
+    agregarPerfilCliente -> Agregar imagen del perfil del Cliente
     NuevoCliente -> Datos basicos login
     NuevaUbicacion
     Editarubicacion -> Editar Nombre y Detalles
@@ -13,8 +16,10 @@ const { Cliente, UserData, UbicacionCliente, CiudadPais } = require("../db");
     ubicacionCliente x ClienteId
     eliminarubicacion -> se elimina con el Id de la ubicacion;
     ubicacionClientebyDefault/:ClienteId  --> Ordenado por Default Ascendente y consulta por ClienteId
+    getImagenPerfil
 
 */
+server.post("/agregarPerfilCliente", upload.single("file"), uploadImgPerfilCliente.uploadPerfilCliente);
 
 server.post("/nuevoCliente", async (req, res) => { 
     try {
@@ -43,18 +48,24 @@ server.post("/nuevaubicacion", async (req, res) => {
       where:{
         id:ClienteId,
       }
-      });
+    });
     
     const ubicacionCliente = await UbicacionCliente.findAll({
       where: {
         ClienteId
       }
     });
-    var Name = null;
-
     const ultimaubicacion = await ubicacionCliente.length-1;
-    const ultimoDefault = await ubicacionCliente[ultimaubicacion].Default;
-    const Default = await ultimoDefault + 1;
+
+    var Default = "X";
+    if(ultimaubicacion === -1){
+      // Si no hay ninguna ubicacion guardada de este cliente
+      Default = 1;
+    }
+    else{
+      const ultimoDefault = await ubicacionCliente[ultimaubicacion].Default;
+      Default = await ultimoDefault + 1;
+    }
 
     const ubicacionClienteCreada = await UbicacionCliente.create(
       {
@@ -67,7 +78,7 @@ server.post("/nuevaubicacion", async (req, res) => {
           /* CiudadPaiId:1 */
       }
     );
-
+    
     res.json(ubicacionClienteCreada? ubicacionClienteCreada : "No se pudo crear la ubicacion");
   } catch (error) {
     res.send(error);
@@ -203,6 +214,26 @@ server.get("/ubicacionClientebyDefault/:ClienteId", async (req, res) => {
     res.send(error);
   }
 });
+
+server.get("/getImagenPerfil/:ClienteId", async (req, res) => {
+    try {
+      const { ClienteId } = req.params;
+      const imagenPerfil = await ImgCliente.findOne({
+        where: { ClienteId },
+        attributes: ['name']
+      });
+      imagenPerfil? res.send(imagenPerfil) : res.send("No se encontraron imagenes para este cliente");
+      
+    } catch (e) {
+      res.send(e);
+    } 
+  }
+);
+
+// Para ver las imagenes
+const path = require('path');
+var public = path.join(__dirname,'../../uploads');
+server.use('/imagenes', express.static(public));
 
 module.exports =  server;
 
