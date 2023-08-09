@@ -13,13 +13,14 @@ const upload = require("../middleware/upload");
   GET
     cambiarUbicacionDefault
     Clientes -> UbicacionCliente
+    Usuario
     ubicacionCliente x ClienteId
     eliminarubicacion -> se elimina con el Id de la ubicacion;
     ubicacionClientebyDefault/:ClienteId  --> Ordenado por Default Ascendente y consulta por ClienteId
     getImagenPerfil
 
 */
-server.post("/agregarPerfilCliente", upload.single("file"), uploadImgPerfilCliente.uploadPerfilCliente);
+server.post("/agregarPerfilCliente", upload.single("file"), uploadImgPerfilCliente.uploadPerfilCliente, );
 
 server.post("/nuevoCliente", async (req, res) => { 
     try {
@@ -104,11 +105,11 @@ server.post("/editarubicacion", async (req, res) => {
   }
 });
 
-server.get("/Usuario", async(req,res)=>{
+server.get("/Usuario/:ClienteId", async(req,res)=>{
   try {
-   const usuario = req.user.id; 
-   console.log("USUARIO" + usuario)
-   res.json(usuario)
+    const { ClienteId } = req.params;
+    const usuario = await Cliente.findByPk(ClienteId);
+    res.json(usuario)
   } catch (e) {
     res.send(e)
   }
@@ -220,9 +221,14 @@ server.get("/getImagenPerfil/:ClienteId", async (req, res) => {
       const { ClienteId } = req.params;
       const imagenPerfil = await ImgCliente.findOne({
         where: { ClienteId },
-        attributes: ['name']
-      });
-      imagenPerfil? res.send(imagenPerfil) : res.send("No se encontraron imagenes para este cliente");
+        attributes: ['img_name'],
+        include: [
+          {
+            model: Cliente
+          },
+        ]
+      },);
+      imagenPerfil? res.send(imagenPerfil) : res.json({Mensaje:"No se encontraron fotos de este perfil"});
       
     } catch (e) {
       res.send(e);

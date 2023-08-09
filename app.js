@@ -1,11 +1,23 @@
 var app = require("./index");
 require("dotenv").config();
 const { db } = require("./src/db");
+const https = require('https');
+const fs = require('fs')
 
 const port = process.env.PUERTO;
 console.log(port)
 
 const alter = true;
+
+/* let key = fs.readFileSync(__dirname+'/certificados/tutorial.key','utf-8');
+let cert = fs.readFileSync(__dirname+'/certificados/tutorial.crt','utf-8')
+const parameters = {
+  key: key,
+  cert: cert
+}
+
+let server = https.createServer(parameters,app) */
+
 
 //sequelize model synchronization
 // model.sync(options)

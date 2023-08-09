@@ -23,6 +23,9 @@ module.exports = s => {
         },
         Email:{
             type: DataTypes.STRING
+        },
+        Telefono:{
+            type: DataTypes.STRING
         }
     }, {
     timestamps: false,

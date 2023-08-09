@@ -6,6 +6,7 @@ npm-debug.log
 /resources/
 testing/
 Comparaciones/
+uploads/
 
 locationComparision.js
 PedidosCliente.js

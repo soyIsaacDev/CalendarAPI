@@ -22,7 +22,9 @@ const { Administracion } = require("./src/routes/Administrador")
 const { AutoRoute } = require("./src/routes/autoRoute")
 const { CiudadesRoute } = require("./src/routes/CiudadesRoute");
 const { ImagenRoute } = require("./src/routes/imgPerfil");
-
+const { PagosRoute } = require("./src/routes/Pagos");
+const { ApiRoute } = require("./src/routes/Apikeys");
+ 
 
 app.use(cors());
 
@@ -125,6 +127,8 @@ app.use("/admin/servicios", isAuthenticated, ServiciosOfrecidosRoute);
 app.use("/auto", isAuthenticated, AutoRoute);
 app.use("/Ciudades", isAuthenticated, CiudadesRoute);
 app.use("/imagenes", ImagenRoute);
+app.use("/Pagos",isAuthenticated, PagosRoute);
+app.use("/Apikeys",isAuthenticated, ApiRoute);
 
 app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")

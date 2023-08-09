@@ -7,11 +7,8 @@ module.exports = s => {
       type: {
         type: DataTypes.STRING,
       },
-      name: {
+      img_name: {
         type: DataTypes.STRING,
-      },
-      data: {
-        type: DataTypes.BLOB("long"),
       }
     });
   
