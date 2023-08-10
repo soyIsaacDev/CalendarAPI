@@ -12,7 +12,7 @@ const upload = require("../middleware/upload");
     Editarubicacion -> Editar Nombre y Detalles
   GET
     cambiarUbicacionDefault
-    Clientes -> UbicacionCliente
+    Clientes -> Info de todos los clientes incluyendo Ubicacion
     Usuario
     ubicacionCliente x ClienteId
     eliminarubicacion -> se elimina con el Id de la ubicacion;

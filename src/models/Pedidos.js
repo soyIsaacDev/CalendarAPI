@@ -77,7 +77,7 @@ module.exports = s => {
             }
         },
         Proceso:{
-            type:DataTypes.ENUM('Asignado','En_Camino','En_Proceso','Terminado','CanceladoSinMulta', 'CanceladoConMulta'),
+            type:DataTypes.ENUM('Asignado','En_Camino','Llegando','En_Proceso','Terminado','CanceladoSinMulta', 'CanceladoConMulta'),
             allowNull:false,
         }
     }, {
