@@ -10,7 +10,7 @@ server.get("/crear", async (req, res) => {
     const cleaner = await Cleaner.bulkCreate(
       [
         {
-          "Nombre": "A",
+          "Nombre": "Santa Fe",
           "Apellido": "A",
           "Usuario": "A",
           "Email": "ssdkjkl",
@@ -18,7 +18,7 @@ server.get("/crear", async (req, res) => {
           "PromEvaluacion": 4
         },
         {
-          "Nombre": "B",
+          "Nombre": "Los Portales",
           "Apellido": "B",
           "Usuario": "B",
           "Email": "kdfsfgdsakjkl",
@@ -26,7 +26,7 @@ server.get("/crear", async (req, res) => {
           "PromEvaluacion": 5
         },
         {
-          "Nombre": "C",
+          "Nombre": "Quinta Mayor",
           "Apellido": "C",
           "Usuario": "C",
           "Email": "klkjdsfdsaekl",
@@ -34,7 +34,7 @@ server.get("/crear", async (req, res) => {
           "PromEvaluacion":3
         },
         {
-          "Nombre": "D",
+          "Nombre": "Valle Hermoso",
           "Apellido": "D",
           "Usuario": "D",
           "Email": "JHkl",
@@ -42,7 +42,7 @@ server.get("/crear", async (req, res) => {
           "PromEvaluacion":3
         },
         {
-          "Nombre": "E",
+          "Nombre": "Obispos",
           "Apellido": "E",
           "Usuario": "E",
           "Email": "Ykl",
@@ -50,13 +50,30 @@ server.get("/crear", async (req, res) => {
           "PromEvaluacion":5
         },
         {
-          "Nombre": "F",
+          "Nombre": "Sahuaro",
           "Apellido": "F",
           "Usuario": "F",
           "Email": "Tekl",
           "Contraseña": "Hermosillo", 
           "PromEvaluacion":4
-        }
+        },
+        {
+          "Nombre": "CDMX",
+          "Apellido": "G",
+          "Usuario": "G",
+          "Email": "CDMX",
+          "Contraseña": "CDMX", 
+          "PromEvaluacion":4.4
+        },
+        {
+          "Nombre": "Nogales",
+          "Apellido": "H",
+          "Usuario": "H",
+          "Email": "Nog",
+          "Contraseña": "Nog", 
+          "PromEvaluacion":4.8
+        },
+        
       ]
     );
     
@@ -67,18 +84,18 @@ server.get("/crear", async (req, res) => {
         [ /* 'activo', 'inactivo', 'enservicio' */
           {
             "CleanerId": 1,
-            "Status" : 'enservicio',
-            "TiempoxDesocupar": 16
+            "Status" : 'activo',
+            "TiempoxDesocupar": 50
           },
           {
               "CleanerId": 2,
               "Status" : 'activo',
-              "TiempoxDesocupar": 6
+              "TiempoxDesocupar": 5
           },
           {
               "CleanerId": 3,
-              "Status" : 'enservicio',
-              "TiempoxDesocupar": 20
+              "Status" : 'activo',
+              "TiempoxDesocupar": 7
           },
           {
             "CleanerId": 4,
@@ -93,8 +110,18 @@ server.get("/crear", async (req, res) => {
           {
             "CleanerId": 6,
             "Status" : 'activo',
-            "TiempoxDesocupar": 35
+            "TiempoxDesocupar": 5
           },
+          {
+            "CleanerId": 7,
+            "Status" : 'activo',
+            "TiempoxDesocupar": 28
+          },
+          {
+            "CleanerId": 8,
+            "Status" : 'activo',
+            "TiempoxDesocupar": 18
+          }
         ]
       );
     }, 400);
@@ -104,38 +131,50 @@ server.get("/crear", async (req, res) => {
         [
           {
             "CleanerId": 1,
-            "UbicacionLat" : 29.0877,
-            "UbicacionLong": -110.29,
+            "UbicacionLat" : 29.088133,
+            "UbicacionLong": -110.990829,
             "UbicacionCasaSum": 0
           },
           {
               "CleanerId": 2,
-              "UbicacionLat" : 28.0877,
-              "UbicacionLong": -109.15,
+              "UbicacionLat" : 29.076701,
+              "UbicacionLong": -110.996486,
               "UbicacionCasaSum": 0
           },
           {
               "CleanerId": 3,
-              "UbicacionLat" : 30.01,
-              "UbicacionLong": -110.34,
+              "UbicacionLat" : 29.082469,
+              "UbicacionLong": -110.984148,
               "UbicacionCasaSum": 0
           },
           {
             "CleanerId": 4,
-            "UbicacionLat" : 29.077,
-            "UbicacionLong": -110.996,
+            "UbicacionLat" : 29.087770,
+            "UbicacionLong": -110.968448,
             "UbicacionCasaSum": 0
           },
           {
             "CleanerId": 5,
-            "UbicacionLat" : 28.0877,
-            "UbicacionLong": -109.15,
+            "UbicacionLat" : 29.087616,
+            "UbicacionLong": -111.010969,
             "UbicacionCasaSum": 0
           },
           {
             "CleanerId": 6,
-            "UbicacionLat" : 31.01,
-            "UbicacionLong": -100.34,
+            "UbicacionLat" : 29.101345,
+            "UbicacionLong": -110.996368,
+            "UbicacionCasaSum": 0
+          },
+          {
+            "CleanerId": 7,
+            "UbicacionLat" : 19.41,
+            "UbicacionLong": -99.17,
+            "UbicacionCasaSum": 0
+          },
+          {
+            "CleanerId": 8,
+            "UbicacionLat" : 31.29,
+            "UbicacionLong": 110.94,
             "UbicacionCasaSum": 0
           },
         ]
@@ -191,10 +230,10 @@ server.get("/crear", async (req, res) => {
           [
             {
               "ClienteId": 1,
-              "UbicacionLat" : 29.0877,
-              "UbicacionLong": -110.29,
+              "UbicacionLat" : 29.084544,
+              "UbicacionLong": -110.990528,
               "UbicacionCasaSum": 0,
-              "Nombre":"Principal",
+              "Nombre":"Las Quintas",
               "Default": 1, 
               "CiudadPaiId":1
             },

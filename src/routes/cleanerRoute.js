@@ -232,7 +232,34 @@ server.get("/evaluarCleaner/:CleanerId/:Calificacion", async (req, res) => {
   }
 });
 
-
+server.get("/solicitarLavado", async (req, res) => {
+  try {
+    const cleanerDisponible = await Cleaner.findAll({
+      // unimos tablas con el include
+      // el orden de los includes afecta como se puede ordenar
+      // se debe hacer los includes segun como deseamos ordenar
+        include: [
+          {
+            model: UbicacionCleaner
+          },
+          {
+            model: CleanerStatus
+          },
+          {
+            model: Evaluacion
+          }
+        ],
+        // Ordenamos el primero modelo y luego el segundo.
+        order:[
+          [ UbicacionCleaner, 'UbicacionCasaSum', 'ASC'],
+          [CleanerStatus, 'TiempoxDesocupar', 'ASC']
+        ],
+      });
+    res.json(cleanerDisponible);
+  } catch (error) {     
+    res.send(error);
+  }
+});
 
 module.exports =  server;
   

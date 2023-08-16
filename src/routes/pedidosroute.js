@@ -1,6 +1,6 @@
 const server = require("express").Router();
 
-const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db");
+const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion, CleanerCercano } = require("../db");
 
 /*  POST 
       solicitar Quicky -> Procesa un pedido y asigna el Cleaner mas cercano (aun no confirmado)
@@ -15,15 +15,15 @@ const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, E
 server.post("/solicitarQuicky", async (req, res) => { 
   try {
     console.log("Solicitando Quicky")
-    const { ClienteId, Tipo, Hora } = req.body;
-    let CleanerId = null;
+    const { ClienteId } = req.body;
 
-    const ubicacionCliente = await UbicacionCliente.findAll({
+    const ubicacionCliente = await UbicacionCliente.findOne({
       where: {
         ClienteId: ClienteId
-      } 
+      }
     });
-    const ubicacionTotalCliente = ubicacionCliente[ubicacionCliente.length-1].UbicacionCasaSum;
+    const LatCliente = ubicacionCliente.UbicacionLat;
+    const LongCliente = ubicacionCliente.UbicacionLong;
     
     //La variable que afecta la asignacion de Pedidos es el tiempo 
     // total (de translado + tiempo x desocupar)
@@ -44,52 +44,93 @@ server.post("/solicitarQuicky", async (req, res) => {
         {
           model: Evaluacion
         }
-      ],
-      // Ordenamos el primero modelo y luego el segundo.
-      order:[
-        [ UbicacionCleaner, 'UbicacionCasaSum', 'ASC'],
-        [CleanerStatus, 'TiempoxDesocupar', 'ASC']
-      ],
+      ]
     });
+
       // Aqui buscamos que cleaners estan disponibles, que 
       // tan cerca del cliente y que tan rapido se desocupan
     for (let i = 0; i < cleanerDisponible.length; i++) {
       const statuscleaner = cleanerDisponible[i].CleanerStatus.Status;
       const tiempoxDesocupar = cleanerDisponible[i].CleanerStatus.TiempoxDesocupar;
-      var ubicacionTotalCleaner = cleanerDisponible[i].UbicacionCleaners[0].UbicacionCasaSum; 
-      
-      console.log("i = "+i +" Tiempo "+tiempoxDesocupar+" ubicacionCleaner "+ubicacionTotalCleaner)
-      const distancia = ubicacionTotalCleaner - ubicacionTotalCliente
-      if(distancia < 0){
-        distancia*-1;
+      const LatCleaner = cleanerDisponible[i].UbicacionCleaners[0].UbicacionLat;
+      const LongCleaner = cleanerDisponible[i].UbicacionCleaners[0].UbicacionLong;
+    
+      var distLat = LatCliente - LatCleaner;
+      var distLong = LongCliente - LongCleaner;
+  
+      if(distLat < 0){
+        distLat = distLat*-1;
       }
-      if(tiempoxDesocupar < 10 && distancia < 0.5){
-        //pedido.CleanerId = cleanerDisponible[i].id;
+      if(distLong < 0){
+        distLong= distLong*-1;
+      }
+      const distancia = distLat + distLong;
 
-        /* 
-          MODIFICAR ESTO PARA QUE NO GUARDE EL CLEANER HASTA LLAMAR A LA RUTA ASIGNARPEDIDO
-        */
-        CleanerId = cleanerDisponible[i].id;
-      }
-      else if (tiempoxDesocupar < 10 && distancia < 3.5){
-        CleanerId = cleanerDisponible[i].id;
-      }
-      else if (tiempoxDesocupar < 15 && distancia < 0.5){
-        CleanerId = cleanerDisponible[i].id;
-      }
-      else if (tiempoxDesocupar < 15 && distancia < 1.5){
-        CleanerId = cleanerDisponible[i].id;
-      }
+      await CleanerCercano.create({
+        CleanerId: cleanerDisponible[i].id,
+        TiempoxDesocupar:tiempoxDesocupar,
+        Distancia: distancia,
+        DistLat: distLat,
+        DistLong: distLong,
+        Status: statuscleaner,
+        Nombre: cleanerDisponible[i].Nombre,
+        TiempoDeLlegada: tiempoxDesocupar,
+        PromEvaluacion:cleanerDisponible[i].PromEvaluacion
+      });
+
     }
 
-    const cleaner = cleanerDisponible[CleanerId];
+    const cleanerOrdenado = await CleanerCercano.findAll({
+      order: [
+        ['Status', 'ASC'],
+        ['Distancia', 'ASC'],
+        ['TiempoxDesocupar', 'ASC']
+      ]
+    });
     
-    res.json(cleaner? cleaner : "No hay cleaner disponibles");
+    var cleanerAsignado = cleanerOrdenado[0];
+
+    var diferenciaTiempo = cleanerOrdenado[0].TiempoxDesocupar - cleanerOrdenado[2].TiempoxDesocupar; 
+    var diferenciaDistancia = cleanerOrdenado[0].Distancia  - cleanerOrdenado[2].Distancia;
+      if(diferenciaDistancia < 0){
+        diferenciaDistancia= diferenciaDistancia*-1;
+      }
+    // se asigna al siguiente cleaner si la diferencia en tiempo es  
+    // mayor a 20 minutos y la distancia es menor a 2 kilometros
+    if(diferenciaTiempo > 20 && diferenciaDistancia < 0.012){
+      cleanerAsignado = cleanerOrdenado[2];
+    }
+    
+    var diferenciaTiempo = cleanerOrdenado[0].TiempoxDesocupar - cleanerOrdenado[1].TiempoxDesocupar; 
+    var diferenciaDistancia = cleanerOrdenado[0].Distancia  - cleanerOrdenado[1].Distancia;
+      if(diferenciaDistancia < 0){
+        diferenciaDistancia= diferenciaDistancia*-1;
+      }
+    // se asigna al siguiente cleaner si la diferencia en tiempo es  
+    // mayor a 20 minutos y la distancia es menor a 2 kilometros
+    if(diferenciaTiempo > 20 && diferenciaDistancia < 0.02){
+      cleanerAsignado = cleanerOrdenado[1];
+    }
+
+    // Se borra la tabla para asignar cleaner en el futuro
+    await CleanerCercano.truncate({});
+    
+    res.json(cleanerAsignado? cleanerAsignado : "No hay cleaner disponibles");
   } catch (error) {
     res.send(error);
   }
 });
 
+server.get("/sintabla",async (req, res) => { 
+  try {
+    const cleanerAsignado = await CleanerCercano.findAll({
+    });
+    res.json(cleanerAsignado);
+  }
+  catch (error) {
+    res.send(error);
+  }
+})
 //Confirma el pedido
 server.post("/nuevoPedido", async (req, res) => { 
     try {
@@ -183,9 +224,10 @@ server.get("/ultimoquickypedido/:ClienteId", async (req, res) => {
     const pedidos = await Pedidos.findAll({
       where: {
         ClienteId
-      } 
+      },
+      order: [['id', 'DESC']] 
     });
-    const ultimoPedido = pedidos[pedidos.length-1];
+    const ultimoPedido = pedidos[0];
     res.json(ultimoPedido? ultimoPedido : "El Cliente no tiene pedidos");
   } catch (e) {
     res.send(e)

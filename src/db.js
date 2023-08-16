@@ -40,6 +40,7 @@ const modelCiudadPais = require("./models/CiudadPais");
 const modelSession = require("./models/Sessions");
 const modelUser = require("./models/User");
 const modelImgCliente = require("./models/ImgCliente");
+const modelCleanerCercano = require("./models/cleanerCercano");
 
 
 //pasamos instancia de sequelize a los modelos
@@ -60,10 +61,11 @@ modelCiudadPais(sequelize);
 modelSession(sequelize);
 modelUser(sequelize);
 modelImgCliente(sequelize);
+modelCleanerCercano(sequelize);
 
 let {Cleaner, Evaluacion, CalendarEventsAsig, CalendarEventsReq, Cliente, Citas, UserData, 
   UbicacionCliente, UbicacionCleaner, Pedidos, Auto, CleanerStatus, ServiciosOfrecidos,
-  CiudadPais, Sessions, User, ImgCliente,
+  CiudadPais, Sessions, User, ImgCliente, CleanerCercano
 
 } = sequelize.models;
 
