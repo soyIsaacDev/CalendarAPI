@@ -90,7 +90,7 @@ server.get('/oauth2/redirect/google',
 
     //Generating a jsonwebtoken
     //jwt.sign(payload, secretOrPrivateKey, [options, callback])
-    const token = jwt.sign({ data: req.user },process.env['SECRET_JWT_TOKEN'], { expiresIn: '1h' });
+    const token = jwt.sign({ data: req.user },process.env['SECRET_JWT_TOKEN'], { expiresIn: '5h' });
     
     console.log(token);
     console.log("Usuario Google Auth" + JSON.stringify(req.user))

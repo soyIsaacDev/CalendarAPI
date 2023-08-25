@@ -8,6 +8,7 @@ const { Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion } = require("../db"
     NuevaUbicacion
     cambiarStatusCleaner
     actualizarTiempoxDesocupar
+    sendNotificationToken  -> enviar el token de push notification
   GET
     cleaner -> All incluye modelos asociados
     unCleaner -> Incluye modelos asociados
@@ -90,6 +91,30 @@ server.post("/actualizarTiempoxDesocupar", async (req, res) => {
     res.send(error);
   }
 });
+
+
+
+server.post("/sendNotificationToken", async (req, res) => { 
+  try {
+    const {  CleanerId, pushNotificationToken  } = req.body;
+    const cleaner = await Cleaner.findByPk(CleanerId);
+    cleaner.NotificationToken = pushNotificationToken;
+    await cleaner.save();
+      
+    res.json("Token recibido "+ cleaner);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+server.get("/prueballegadaCliente", async(req,res)=>{
+  try {
+    console.log("LLEGADA DESDE APP")
+    res.json({"Mensaje":"Si esta llegando al cliente"})
+  } catch (e) {
+    res.send(e)
+  }
+})
 
 server.get("/cleaner", async (req, res) => {
   try {

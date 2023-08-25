@@ -28,7 +28,11 @@ module.exports = s => {
         PromEvaluacion:{
             type: DataTypes.FLOAT,
             allowNull:true
-        }
+        },
+        NotificationToken:{
+            type: DataTypes.STRING,
+            allowNull:true
+        },
     }, {
     timestamps: false,
     });

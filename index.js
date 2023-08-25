@@ -25,6 +25,7 @@ const { ImagenRoute } = require("./src/routes/imgPerfil");
 const { PagosRoute } = require("./src/routes/Pagos");
 const { ApiRoute } = require("./src/routes/Apikeys");
 const { EventsRoute} = require("./src/routes/events");
+const { NotificationRoute } = require("./src/routes/pushNotificationRoute");
 
 app.use(cors());
 
@@ -115,7 +116,7 @@ app.get("/login", (req,res) => {
     res.send("Loggear con google");
 });
 
-app.use("/cleaner", isAuthenticated, CleanerRoute);
+app.use("/cleaner", CleanerRoute);
 app.use("/calendario",isAuthenticated, CalendarRoute );
 app.use("/cliente", isAuthenticated, ClienteRoute);
 app.use("/eventosprogramados", EventosProgramados);
@@ -130,6 +131,7 @@ app.use("/imagenes", ImagenRoute);
 app.use("/Pagos",isAuthenticated, PagosRoute);
 app.use("/Apikeys",isAuthenticated, ApiRoute);
 app.use("/events", EventsRoute);
+app.use("/pushNotification", NotificationRoute);
 
 app.use((req, res, next) => {
     res.status(404).send(" :( Este gatito busco y busco y no encontro lo que buscas! Intenta de nuevo ;)")

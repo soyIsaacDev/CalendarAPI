@@ -1,6 +1,7 @@
 const server = require("express").Router();
+const sendPushNotification = require("../middleware/PushNotifications")
 
-const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion, CleanerCercano } = require("../db");
+const {  Pedidos, UbicacionCliente,  Cleaner, UbicacionCleaner, CleanerStatus, Evaluacion, CleanerCercano, Cliente } = require("../db");
 
 /*  POST 
       solicitar Quicky -> Procesa un pedido y asigna el Cleaner mas cercano (aun no confirmado)
@@ -20,7 +21,8 @@ server.post("/solicitarQuicky", async (req, res) => {
     const ubicacionCliente = await UbicacionCliente.findOne({
       where: {
         ClienteId: ClienteId
-      }
+      },
+      order:[["Default", "ASC"]]
     });
     const LatCliente = ubicacionCliente.UbicacionLat;
     const LongCliente = ubicacionCliente.UbicacionLong;
@@ -115,22 +117,13 @@ server.post("/solicitarQuicky", async (req, res) => {
     // Se borra la tabla para asignar cleaner en el futuro
     await CleanerCercano.truncate({});
     
-    res.json(cleanerAsignado? cleanerAsignado : "No hay cleaner disponibles");
+    res.json(cleanerAsignado? cleanerAsignado: "No hay cleaner disponibles");
   } catch (error) {
     res.send(error);
   }
 });
 
-server.get("/sintabla",async (req, res) => { 
-  try {
-    const cleanerAsignado = await CleanerCercano.findAll({
-    });
-    res.json(cleanerAsignado);
-  }
-  catch (error) {
-    res.send(error);
-  }
-})
+
 //Confirma el pedido
 server.post("/nuevoPedido", async (req, res) => { 
     try {
@@ -146,17 +139,26 @@ server.post("/nuevoPedido", async (req, res) => {
       console.log("ultimaUbicacionClienteLat "+ ultimaUbicacionClienteLat)
       console.log("ultimaUbicacionClienteLong "+ ultimaUbicacionClienteLong)
       const pedido = await Pedidos.create({
-        
-          ClienteId,
           kind: Tipo,
           colorId: 1,
           auto: Auto,
           start: Hora,
           ubicacionLat: ultimaUbicacionClienteLat,
           ubicacionLong: ultimaUbicacionClienteLong,
-          CleanerId, 
           Proceso
       });
+      // Asignamos el Cliente y Cleaner
+      pedido.ClienteId= ClienteId;
+      pedido.CleanerId = CleanerId;
+      await pedido.save();
+
+      const cleaner = await Cleaner.findByPk(CleanerId);
+      const cliente = await Cliente.findByPk(ClienteId);
+    
+      const notificationBody = cliente.Nombre + " quiere un quicky"
+      console.log("Notificar a " + cleaner.Nombre + " " +cleaner.NotificationToken);
+      //sendPushNotification(["ExponentPushToken[3tgWTVNE1HoCFYeVRKvhwi]"],`Nuevo Pedido! ¿Listo para un Quicky?`, notificationBody, pedido);
+      sendPushNotification([cleaner.NotificationToken],`Nuevo Pedido! ¿Listo para un Quicky?`, notificationBody, pedido)
       console.log("Pedido " + JSON.stringify(pedido))
       res.json(pedido);
     } catch (error) {
@@ -173,7 +175,7 @@ server.get("/cambiarstatusproceso/:PedidoId/:Status", async (req, res) => {
       } 
     });
 
-    if(Status == "Cancelado"){
+    if(Status === "Cancelado"){
       const horaPedido = pedido.start;
       const horaActual = new Date();
       // si la hora de cancelacion es menor a 5 minutos no hay cobro
@@ -218,17 +220,18 @@ server.get("/quickyspedidos/:ClienteId", async (req, res) => {
   }
 });
 
-server.get("/ultimoquickypedido/:ClienteId", async (req, res) => {
+server.get("/ultimoPedido/:ClienteId", async (req, res) => {
   try {
     let { ClienteId } = req.params;
+    console.log("BUSCANDO ULTIMO PEDIDO")
     const pedidos = await Pedidos.findAll({
       where: {
         ClienteId
       },
-      order: [['id', 'DESC']] 
+      order: [['id', 'DESC']]
     });
     const ultimoPedido = pedidos[0];
-    res.json(ultimoPedido? ultimoPedido : "El Cliente no tiene pedidos");
+    res.json(ultimoPedido? ultimoPedido : "El Cliente No Tiene Pedidos");
   } catch (e) {
     res.send(e)
   }
@@ -236,12 +239,14 @@ server.get("/ultimoquickypedido/:ClienteId", async (req, res) => {
 server.get("/pedidos", async (req, res) => {
   try {
     const pedidos = await Pedidos.findAll({
+      order: [['id', 'DESC']]
     });
     res.json(pedidos);
   } catch (e) {
     res.send(e)
   }
 });
+
 
 
 
